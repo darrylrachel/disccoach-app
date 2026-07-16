@@ -127,6 +127,23 @@ export async function getActivePracticeSession(userId: string): Promise<Practice
   return data ? toDomainSession(data) : null
 }
 
+// Flexible enough to serve the streak calculation (completed only), the
+// dashboard's recent-sessions widget (completed + abandoned, limited), and
+// the full history screen (completed + abandoned, unlimited).
+export async function listPracticeSessionsForUser(
+  userId: string,
+  options: { statuses?: SessionStatus[]; limit?: number } = {},
+): Promise<PracticeSession[]> {
+  let request = supabase.from('practice_sessions').select('*').eq('user_id', userId)
+  if (options.statuses) request = request.in('status', options.statuses)
+  request = request.order('started_at', { ascending: false })
+  if (options.limit) request = request.limit(options.limit)
+
+  const { data, error } = await request
+  if (error) throw error
+  return data.map(toDomainSession)
+}
+
 export async function completePracticeSession(id: string): Promise<PracticeSession> {
   const { data, error } = await supabase
     .from('practice_sessions')
@@ -156,6 +173,20 @@ export async function listSessionLogEntries(sessionId: string): Promise<Practice
     .from('practice_log_entries')
     .select('*')
     .eq('session_id', sessionId)
+    .order('logged_at')
+
+  if (error) throw error
+  return data.map(toDomainLogEntry)
+}
+
+// Every putting/accuracy result a user has ever logged, for progress trend
+// charts. `logged_at` lets the caller bucket by day without a session join.
+export async function listPuttingLogEntriesForUser(userId: string): Promise<PracticeLogEntry[]> {
+  const { data, error } = await supabase
+    .from('practice_log_entries')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('metric_type', 'makes_attempts')
     .order('logged_at')
 
   if (error) throw error

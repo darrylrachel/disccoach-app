@@ -40,7 +40,9 @@ export function SessionSummaryScreen() {
 
   return (
     <div className="px-6 py-8 pb-24">
-      <h1 className="mb-1 text-2xl font-bold text-white">Session complete</h1>
+      <h1 className="mb-1 text-2xl font-bold text-white">
+        {session.status === 'abandoned' ? 'Session abandoned' : 'Session complete'}
+      </h1>
       <p className="mb-8 text-white/50">
         {CATEGORY_LABELS[session.category]} · {session.durationMinutes} min
       </p>

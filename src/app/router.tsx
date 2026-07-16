@@ -15,6 +15,7 @@ import { PracticeHomeScreen } from '../features/practice/screens/PracticeHomeScr
 import { ActiveSessionScreen } from '../features/practice/screens/ActiveSessionScreen'
 import { SessionSummaryScreen } from '../features/practice/screens/SessionSummaryScreen'
 import { DashboardScreen } from '../features/progress/screens/DashboardScreen'
+import { HistoryScreen } from '../features/progress/screens/HistoryScreen'
 
 export function AppRouter() {
   return (
@@ -31,6 +32,7 @@ export function AppRouter() {
           <Route element={<RequireOnboarding />}>
             <Route element={<AppShell />}>
               <Route path="/" element={<DashboardScreen />} />
+              <Route path="/history" element={<HistoryScreen />} />
               <Route path="/discs" element={<DiscListScreen />} />
               <Route path="/discs/new" element={<AddDiscScreen />} />
               <Route path="/discs/:discId" element={<DiscDetailScreen />} />

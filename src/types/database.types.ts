@@ -211,6 +211,44 @@ export type Database = {
           },
         ]
       }
+      personal_records: {
+        Row: {
+          achieved_at: string
+          created_at: string
+          id: string
+          record_type: string
+          source_session_id: string | null
+          user_id: string
+          value: number
+        }
+        Insert: {
+          achieved_at: string
+          created_at?: string
+          id?: string
+          record_type: string
+          source_session_id?: string | null
+          user_id: string
+          value: number
+        }
+        Update: {
+          achieved_at?: string
+          created_at?: string
+          id?: string
+          record_type?: string
+          source_session_id?: string | null
+          user_id?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "personal_records_source_session_id_fkey"
+            columns: ["source_session_id"]
+            isOneToOne: false
+            referencedRelation: "practice_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       practice_log_entries: {
         Row: {
           attempts: number | null

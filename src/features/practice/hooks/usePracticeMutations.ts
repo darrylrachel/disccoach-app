@@ -5,6 +5,7 @@ import {
   completePracticeSession,
   createPracticeSession,
 } from '../../../services/practice.service'
+import { updatePersonalRecordsForSession } from '../../../services/progress.service'
 import type { NewPracticeLogEntryInput, NewPracticeSessionInput } from '../../../domain/practice/models'
 import { useSession } from '../../auth/hooks/useSession'
 
@@ -37,10 +38,17 @@ export function useCompletePracticeSession() {
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: (sessionId: string) => completePracticeSession(sessionId),
+    mutationFn: async (sessionId: string) => {
+      const session = await completePracticeSession(sessionId)
+      await updatePersonalRecordsForSession(user!.id, sessionId)
+      return session
+    },
     onSuccess: (session) => {
       queryClient.setQueryData(['practiceSession', session.id], session)
       queryClient.setQueryData(['activePracticeSession', user?.id], null)
+      queryClient.invalidateQueries({ queryKey: ['personalRecords', user?.id] })
+      queryClient.invalidateQueries({ queryKey: ['practiceSessions', user?.id] })
+      queryClient.invalidateQueries({ queryKey: ['puttingLogEntries', user?.id] })
     },
   })
 }
@@ -54,6 +62,7 @@ export function useAbandonPracticeSession() {
     onSuccess: (session) => {
       queryClient.setQueryData(['practiceSession', session.id], session)
       queryClient.setQueryData(['activePracticeSession', user?.id], null)
+      queryClient.invalidateQueries({ queryKey: ['practiceSessions', user?.id] })
     },
   })
 }
