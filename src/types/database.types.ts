@@ -211,6 +211,53 @@ export type Database = {
           },
         ]
       }
+      practice_log_entries: {
+        Row: {
+          attempts: number | null
+          distance_feet: number | null
+          drill_label: string
+          id: string
+          logged_at: string
+          makes: number | null
+          metric_type: string
+          notes: string | null
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          attempts?: number | null
+          distance_feet?: number | null
+          drill_label: string
+          id?: string
+          logged_at?: string
+          makes?: number | null
+          metric_type: string
+          notes?: string | null
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          attempts?: number | null
+          distance_feet?: number | null
+          drill_label?: string
+          id?: string
+          logged_at?: string
+          makes?: number | null
+          metric_type?: string
+          notes?: string | null
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "practice_log_entries_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "practice_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       practice_session_templates: {
         Row: {
           category: string
@@ -240,6 +287,53 @@ export type Database = {
           structure?: Json
         }
         Relationships: []
+      }
+      practice_sessions: {
+        Row: {
+          category: string
+          completed_at: string | null
+          created_at: string
+          duration_minutes: number
+          id: string
+          started_at: string
+          status: string
+          template_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          completed_at?: string | null
+          created_at?: string
+          duration_minutes: number
+          id?: string
+          started_at?: string
+          status?: string
+          template_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          completed_at?: string | null
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          started_at?: string
+          status?: string
+          template_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "practice_sessions_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "practice_session_templates"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {

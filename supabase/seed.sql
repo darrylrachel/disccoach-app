@@ -107,3 +107,215 @@ values
   ('Clash', 'Peace', ARRAY['Steady','Sharp'], 2, 3, 0, 0, 'putter', 'understable'),
   ('Clash', 'Cannon', ARRAY['Steady','Sharp'], 12, 5, -1, 3, 'distance_driver', 'overstable'),
   ('Clash', 'Rally', ARRAY['Steady','Sharp'], 6, 5, -1, 1, 'fairway_driver', 'stable');
+
+-- Practice session template library: one row per category (putting,
+-- distance, field_work, accuracy) x difficulty (beginner/intermediate/
+-- advanced) x duration (20/45/60 min) — 36 templates total, so the session
+-- generator always has an exact match to select from.
+insert into public.practice_session_templates
+  (name, category, difficulty, duration_minutes, structure)
+values
+  -- Putting
+  ('20-Minute Beginner Putting Tune-Up', 'putting', 'beginner', 20, '[
+    {"label": "Warm-up circle putts (10ft)", "reps": 20},
+    {"label": "10ft putts", "reps": 20},
+    {"label": "15ft putts", "reps": 15}
+  ]'::jsonb),
+  ('45-Minute Beginner Putting Session', 'putting', 'beginner', 45, '[
+    {"label": "Warm-up circle putts (10ft)", "reps": 20},
+    {"label": "10ft putts", "reps": 30},
+    {"label": "15ft putts", "reps": 25},
+    {"label": "20ft putts", "reps": 15}
+  ]'::jsonb),
+  ('60-Minute Beginner Putting Session', 'putting', 'beginner', 60, '[
+    {"label": "Warm-up circle putts (10ft)", "reps": 20},
+    {"label": "10ft putts", "reps": 40},
+    {"label": "15ft putts", "reps": 30},
+    {"label": "20ft putts", "reps": 20},
+    {"label": "Footwork/stance reps", "reps": 10}
+  ]'::jsonb),
+  ('20-Minute Intermediate Putting Tune-Up', 'putting', 'intermediate', 20, '[
+    {"label": "15ft putts", "reps": 20},
+    {"label": "20ft putts", "reps": 20},
+    {"label": "25ft putts", "reps": 10}
+  ]'::jsonb),
+  ('45-Minute Intermediate Putting Session', 'putting', 'intermediate', 45, '[
+    {"label": "15ft putts", "reps": 25},
+    {"label": "20ft putts", "reps": 25},
+    {"label": "25ft putts", "reps": 20},
+    {"label": "30ft putts", "reps": 10}
+  ]'::jsonb),
+  ('60-Minute Intermediate Putting Session', 'putting', 'intermediate', 60, '[
+    {"label": "15ft putts", "reps": 30},
+    {"label": "20ft putts", "reps": 30},
+    {"label": "25ft putts", "reps": 25},
+    {"label": "30ft putts", "reps": 15},
+    {"label": "Scramble putts (uneven lies)", "reps": 10}
+  ]'::jsonb),
+  ('20-Minute Advanced Putting Tune-Up', 'putting', 'advanced', 20, '[
+    {"label": "20ft putts", "reps": 20},
+    {"label": "25ft putts", "reps": 15},
+    {"label": "30ft putts", "reps": 15}
+  ]'::jsonb),
+  ('45-Minute Advanced Putting Session', 'putting', 'advanced', 45, '[
+    {"label": "20ft putts", "reps": 25},
+    {"label": "25ft putts", "reps": 20},
+    {"label": "30ft putts", "reps": 20},
+    {"label": "35ft upshots", "reps": 15}
+  ]'::jsonb),
+  ('60-Minute Advanced Putting Session', 'putting', 'advanced', 60, '[
+    {"label": "20ft putts", "reps": 30},
+    {"label": "25ft putts", "reps": 25},
+    {"label": "30ft putts", "reps": 25},
+    {"label": "35ft upshots", "reps": 20},
+    {"label": "Pressure putts (must-make streaks)", "reps": 15}
+  ]'::jsonb),
+
+  -- Distance
+  ('20-Minute Beginner Distance Session', 'distance', 'beginner', 20, '[
+    {"label": "Form reps (no disc / short pull)", "reps": 15},
+    {"label": "Backhand distance throws", "reps": 15},
+    {"label": "Forehand distance throws", "reps": 10}
+  ]'::jsonb),
+  ('45-Minute Beginner Distance Session', 'distance', 'beginner', 45, '[
+    {"label": "Form reps (no disc / short pull)", "reps": 15},
+    {"label": "Backhand distance throws", "reps": 25},
+    {"label": "Forehand distance throws", "reps": 20},
+    {"label": "Rest & stretch", "reps": 5}
+  ]'::jsonb),
+  ('60-Minute Beginner Distance Session', 'distance', 'beginner', 60, '[
+    {"label": "Form reps (no disc / short pull)", "reps": 20},
+    {"label": "Backhand distance throws", "reps": 30},
+    {"label": "Forehand distance throws", "reps": 25},
+    {"label": "Max effort throws (record best)", "reps": 10}
+  ]'::jsonb),
+  ('20-Minute Intermediate Distance Session', 'distance', 'intermediate', 20, '[
+    {"label": "Backhand distance throws", "reps": 20},
+    {"label": "Forehand distance throws", "reps": 15}
+  ]'::jsonb),
+  ('45-Minute Intermediate Distance Session', 'distance', 'intermediate', 45, '[
+    {"label": "Backhand distance throws", "reps": 30},
+    {"label": "Forehand distance throws", "reps": 25},
+    {"label": "Max effort throws (record best)", "reps": 10}
+  ]'::jsonb),
+  ('60-Minute Intermediate Distance Session', 'distance', 'intermediate', 60, '[
+    {"label": "Backhand distance throws", "reps": 35},
+    {"label": "Forehand distance throws", "reps": 30},
+    {"label": "Max effort throws (record best)", "reps": 15},
+    {"label": "Off-hand throws", "reps": 10}
+  ]'::jsonb),
+  ('20-Minute Advanced Distance Session', 'distance', 'advanced', 20, '[
+    {"label": "Max effort backhand throws (record best)", "reps": 15},
+    {"label": "Max effort forehand throws (record best)", "reps": 15}
+  ]'::jsonb),
+  ('45-Minute Advanced Distance Session', 'distance', 'advanced', 45, '[
+    {"label": "Max effort backhand throws (record best)", "reps": 20},
+    {"label": "Max effort forehand throws (record best)", "reps": 20},
+    {"label": "Standstill vs. run-up comparison throws", "reps": 15}
+  ]'::jsonb),
+  ('60-Minute Advanced Distance Session', 'distance', 'advanced', 60, '[
+    {"label": "Max effort backhand throws (record best)", "reps": 25},
+    {"label": "Max effort forehand throws (record best)", "reps": 25},
+    {"label": "Standstill vs. run-up comparison throws", "reps": 20},
+    {"label": "Off-hand max effort throws", "reps": 15}
+  ]'::jsonb),
+
+  -- Field work
+  ('20-Minute Beginner Field Work Session', 'field_work', 'beginner', 20, '[
+    {"label": "Hyzer shots from the fairway", "reps": 10},
+    {"label": "Flat/straight shots", "reps": 10}
+  ]'::jsonb),
+  ('45-Minute Beginner Field Work Session', 'field_work', 'beginner', 45, '[
+    {"label": "Hyzer shots from the fairway", "reps": 15},
+    {"label": "Anhyzer shots", "reps": 10},
+    {"label": "Flat/straight shots", "reps": 10},
+    {"label": "Tunnel shot practice", "reps": 10}
+  ]'::jsonb),
+  ('60-Minute Beginner Field Work Session', 'field_work', 'beginner', 60, '[
+    {"label": "Hyzer shots from the fairway", "reps": 15},
+    {"label": "Anhyzer shots", "reps": 15},
+    {"label": "Flat/straight shots", "reps": 15},
+    {"label": "Tunnel shot practice", "reps": 10},
+    {"label": "Uphill/downhill lie shots", "reps": 10}
+  ]'::jsonb),
+  ('20-Minute Intermediate Field Work Session', 'field_work', 'intermediate', 20, '[
+    {"label": "Hyzer flip shots", "reps": 10},
+    {"label": "Forehand flex shots", "reps": 10}
+  ]'::jsonb),
+  ('45-Minute Intermediate Field Work Session', 'field_work', 'intermediate', 45, '[
+    {"label": "Hyzer flip shots", "reps": 15},
+    {"label": "Forehand flex shots", "reps": 15},
+    {"label": "Roller shots", "reps": 10},
+    {"label": "Sidearm/backhand switch reps", "reps": 10}
+  ]'::jsonb),
+  ('60-Minute Intermediate Field Work Session', 'field_work', 'intermediate', 60, '[
+    {"label": "Hyzer flip shots", "reps": 15},
+    {"label": "Forehand flex shots", "reps": 15},
+    {"label": "Roller shots", "reps": 15},
+    {"label": "Sidearm/backhand switch reps", "reps": 15},
+    {"label": "Recovery shots from the rough", "reps": 10}
+  ]'::jsonb),
+  ('20-Minute Advanced Field Work Session', 'field_work', 'advanced', 20, '[
+    {"label": "Skip shots", "reps": 10},
+    {"label": "Low ceiling shots (under branches)", "reps": 10}
+  ]'::jsonb),
+  ('45-Minute Advanced Field Work Session', 'field_work', 'advanced', 45, '[
+    {"label": "Skip shots", "reps": 15},
+    {"label": "Low ceiling shots (under branches)", "reps": 15},
+    {"label": "Water carry / gap shots", "reps": 10},
+    {"label": "Tomahawk/thumber utility shots", "reps": 10}
+  ]'::jsonb),
+  ('60-Minute Advanced Field Work Session', 'field_work', 'advanced', 60, '[
+    {"label": "Skip shots", "reps": 15},
+    {"label": "Low ceiling shots (under branches)", "reps": 15},
+    {"label": "Water carry / gap shots", "reps": 15},
+    {"label": "Tomahawk/thumber utility shots", "reps": 15},
+    {"label": "Blind/tunnel recovery shots", "reps": 10}
+  ]'::jsonb),
+
+  -- Accuracy
+  ('20-Minute Beginner Accuracy Session', 'accuracy', 'beginner', 20, '[
+    {"label": "30ft gate throws", "reps": 15},
+    {"label": "Basket accuracy from 50ft", "reps": 10}
+  ]'::jsonb),
+  ('45-Minute Beginner Accuracy Session', 'accuracy', 'beginner', 45, '[
+    {"label": "30ft gate throws", "reps": 20},
+    {"label": "Basket accuracy from 50ft", "reps": 15},
+    {"label": "Basket accuracy from 75ft", "reps": 10}
+  ]'::jsonb),
+  ('60-Minute Beginner Accuracy Session', 'accuracy', 'beginner', 60, '[
+    {"label": "30ft gate throws", "reps": 25},
+    {"label": "Basket accuracy from 50ft", "reps": 20},
+    {"label": "Basket accuracy from 75ft", "reps": 15},
+    {"label": "Gate throws, both hands", "reps": 10}
+  ]'::jsonb),
+  ('20-Minute Intermediate Accuracy Session', 'accuracy', 'intermediate', 20, '[
+    {"label": "Basket accuracy from 75ft", "reps": 15},
+    {"label": "Basket accuracy from 100ft", "reps": 10}
+  ]'::jsonb),
+  ('45-Minute Intermediate Accuracy Session', 'accuracy', 'intermediate', 45, '[
+    {"label": "Basket accuracy from 75ft", "reps": 20},
+    {"label": "Basket accuracy from 100ft", "reps": 15},
+    {"label": "Narrow gate throws (10ft wide)", "reps": 15}
+  ]'::jsonb),
+  ('60-Minute Intermediate Accuracy Session', 'accuracy', 'intermediate', 60, '[
+    {"label": "Basket accuracy from 75ft", "reps": 25},
+    {"label": "Basket accuracy from 100ft", "reps": 20},
+    {"label": "Narrow gate throws (10ft wide)", "reps": 20},
+    {"label": "Circle 2 approach shots", "reps": 15}
+  ]'::jsonb),
+  ('20-Minute Advanced Accuracy Session', 'accuracy', 'advanced', 20, '[
+    {"label": "Basket accuracy from 100ft", "reps": 15},
+    {"label": "Narrow gate throws (8ft wide)", "reps": 10}
+  ]'::jsonb),
+  ('45-Minute Advanced Accuracy Session', 'accuracy', 'advanced', 45, '[
+    {"label": "Basket accuracy from 100ft", "reps": 20},
+    {"label": "Narrow gate throws (8ft wide)", "reps": 15},
+    {"label": "Basket accuracy from 150ft", "reps": 15}
+  ]'::jsonb),
+  ('60-Minute Advanced Accuracy Session', 'accuracy', 'advanced', 60, '[
+    {"label": "Basket accuracy from 100ft", "reps": 25},
+    {"label": "Narrow gate throws (8ft wide)", "reps": 20},
+    {"label": "Basket accuracy from 150ft", "reps": 20},
+    {"label": "Circle 2 approach shots under pressure", "reps": 15}
+  ]'::jsonb);
