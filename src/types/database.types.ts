@@ -1,7 +1,3 @@
-// Auto-generated from the live Supabase project. Do not hand-edit.
-// Regenerate with:
-//   supabase gen types typescript --project-id ovvjzjmdqrkmstywqrxf > src/types/database.types.ts
-
 export type Json =
   | string
   | number
@@ -18,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      bag_discs: {
+        Row: {
+          added_at: string
+          bag_id: string
+          disc_id: string
+          id: string
+          slot: string
+        }
+        Insert: {
+          added_at?: string
+          bag_id: string
+          disc_id: string
+          id?: string
+          slot: string
+        }
+        Update: {
+          added_at?: string
+          bag_id?: string
+          disc_id?: string
+          id?: string
+          slot?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bag_discs_bag_id_fkey"
+            columns: ["bag_id"]
+            isOneToOne: false
+            referencedRelation: "bags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bag_discs_disc_id_fkey"
+            columns: ["disc_id"]
+            isOneToOne: false
+            referencedRelation: "discs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bags: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       disc_catalog: {
         Row: {
           category: string

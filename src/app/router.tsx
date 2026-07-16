@@ -10,6 +10,7 @@ import { DiscListScreen } from '../features/discs/screens/DiscListScreen'
 import { DiscDetailScreen } from '../features/discs/screens/DiscDetailScreen'
 import { AddDiscScreen } from '../features/discs/screens/AddDiscScreen'
 import { BagListScreen } from '../features/bags/screens/BagListScreen'
+import { BagDetailScreen } from '../features/bags/screens/BagDetailScreen'
 import { PracticeHomeScreen } from '../features/practice/screens/PracticeHomeScreen'
 import { DashboardScreen } from '../features/progress/screens/DashboardScreen'
 
@@ -32,6 +33,7 @@ export function AppRouter() {
               <Route path="/discs/new" element={<AddDiscScreen />} />
               <Route path="/discs/:discId" element={<DiscDetailScreen />} />
               <Route path="/bags" element={<BagListScreen />} />
+              <Route path="/bags/:bagId" element={<BagDetailScreen />} />
               <Route path="/practice" element={<PracticeHomeScreen />} />
             </Route>
           </Route>

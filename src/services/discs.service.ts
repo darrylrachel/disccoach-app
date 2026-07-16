@@ -17,7 +17,7 @@ type DiscRowWithCatalog = DiscRow & { disc_catalog: CatalogRow | null }
 
 const DISC_WITH_CATALOG_SELECT = '*, disc_catalog(*)'
 
-function toDomainDisc(row: DiscRow): Disc {
+export function toDomainDisc(row: DiscRow): Disc {
   return {
     id: row.id,
     userId: row.user_id,
