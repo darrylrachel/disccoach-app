@@ -12,3 +12,11 @@ export function recordValueLabel(recordType: RecordType, value: number): string 
   if (puttingDistanceFromRecordType(recordType) !== null) return `${value}%`
   return String(value)
 }
+
+// "+18 ft" / "+7%" for a beaten record, or a first-time-set label when there
+// was no previous value to compare against.
+export function recordImprovementLabel(recordType: RecordType, previousValue: number | null, newValue: number): string {
+  if (previousValue === null) return 'First record set'
+  const unit = recordType === MAX_DISTANCE_RECORD_TYPE ? ' ft' : '%'
+  return `+${newValue - previousValue}${unit}`
+}

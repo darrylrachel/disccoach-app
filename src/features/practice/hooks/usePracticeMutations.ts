@@ -40,12 +40,17 @@ export function useCompletePracticeSession() {
   return useMutation({
     mutationFn: async (sessionId: string) => {
       const session = await completePracticeSession(sessionId)
-      await updatePersonalRecordsForSession(user!.id, sessionId)
-      return session
+      const { brokenRecords } = await updatePersonalRecordsForSession(user!.id, sessionId)
+      return { session, brokenRecords }
     },
-    onSuccess: (session) => {
+    // Defined on the hook (not passed to a `.mutate()` call) so it's
+    // guaranteed to run even if the component that triggered completion has
+    // already unmounted by the time this resolves — see ActiveSessionScreen,
+    // whose last-drill screen remounts around the same time this settles.
+    onSuccess: ({ session, brokenRecords }, sessionId) => {
       queryClient.setQueryData(['practiceSession', session.id], session)
       queryClient.setQueryData(['activePracticeSession', user?.id], null)
+      queryClient.setQueryData(['newPersonalRecords', sessionId], brokenRecords)
       queryClient.invalidateQueries({ queryKey: ['personalRecords', user?.id] })
       queryClient.invalidateQueries({ queryKey: ['practiceSessions', user?.id] })
       queryClient.invalidateQueries({ queryKey: ['puttingLogEntries', user?.id] })

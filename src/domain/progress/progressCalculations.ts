@@ -7,6 +7,7 @@ import {
   type PersonalRecord,
   type StreakSummary,
   type TrendPoint,
+  type TrendSummary,
 } from './models'
 
 const PUTTING_DRILL_LABEL_PATTERN = /^(\d+)ft putts$/i
@@ -18,7 +19,7 @@ export function extractPuttingDistance(drillLabel: string): number | null {
 
 // UTC calendar-day key. Timestamps come from the server, so bucketing in
 // UTC keeps this deterministic and free of local-timezone/DST arithmetic.
-function toDateKey(iso: string): string {
+export function toDateKey(iso: string): string {
   return iso.slice(0, 10)
 }
 
@@ -109,6 +110,7 @@ function detectDistancePR(
     value: best.distanceFeet,
     achievedAt: best.loggedAt,
     sourceSessionId: sessionId,
+    previousValue: currentBest,
   }
 }
 
@@ -144,6 +146,7 @@ function detectPuttingPercentagePRs(
       value: percentage,
       achievedAt: loggedAt,
       sourceSessionId: sessionId,
+      previousValue: currentBest,
     })
   }
 
@@ -169,4 +172,19 @@ export function detectSessionRecords(
   const puttingPRs = detectPuttingPercentagePRs(sessionId, logEntries, puttingBests)
 
   return distancePR ? [distancePR, ...puttingPRs] : puttingPRs
+}
+
+// A change smaller than this (in percentage points) reads as noise rather
+// than a real trend, so it's reported as "stable" instead of up/down.
+const TREND_STABLE_THRESHOLD = 3
+
+// Compares the first and last point of a trend series to give a plain-
+// language read on direction. Needs at least two points to say anything.
+export function summarizeTrend(points: TrendPoint[]): TrendSummary | null {
+  if (points.length < 2) return null
+
+  const change = points[points.length - 1].value - points[0].value
+  if (Math.abs(change) < TREND_STABLE_THRESHOLD) return { direction: 'stable', change }
+
+  return { direction: change > 0 ? 'improving' : 'declining', change }
 }

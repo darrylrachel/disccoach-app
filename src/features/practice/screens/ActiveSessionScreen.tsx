@@ -20,6 +20,11 @@ export function ActiveSessionScreen() {
   const { data: template, isLoading: templateLoading } = usePracticeTemplate(session?.templateId)
   const { data: logEntries, isLoading: entriesLoading } = useSessionLogEntries(sessionId)
 
+  // The screen that logs the final drill remounts (its key is the drill
+  // count) around the same time the completion mutation resolves, so it
+  // can't reliably navigate itself on success — this effect, scoped to the
+  // stable parent, is the one place that's guaranteed to see the status
+  // flip and redirect, whichever session logged it.
   useEffect(() => {
     if (!session || !sessionId) return
     if (session.status === 'completed') navigate(`/practice/${sessionId}/summary`, { replace: true })
@@ -71,11 +76,12 @@ function ActiveSessionContent({ sessionId, category, drills, completedCount }: A
   const completeSession = useCompletePracticeSession()
   const abandonSession = useAbandonPracticeSession()
 
+  // Navigation on completion is handled by the status-watcher effect in the
+  // parent (see comment there) rather than a callback here, since this
+  // component can unmount before the mutation settles.
   function finishIfLastDrill(isLast: boolean) {
     if (!isLast) return
-    completeSession.mutate(sessionId, {
-      onSuccess: () => navigate(`/practice/${sessionId}/summary`),
-    })
+    completeSession.mutate(sessionId)
   }
 
   function handleLogMakesAttempts(event: FormEvent) {

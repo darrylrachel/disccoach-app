@@ -5,6 +5,7 @@ import {
   detectSessionRecords,
   extractPuttingDistance,
   puttingDistancesInEntries,
+  summarizeTrend,
 } from './progressCalculations'
 import type { PersonalRecord } from './models'
 import type { PracticeLogEntry } from '../practice/models'
@@ -130,7 +131,13 @@ describe('detectSessionRecords', () => {
     ]
     const records = detectSessionRecords('session-1', entries, [])
     expect(records).toEqual([
-      { recordType: 'max_distance', value: 350, achievedAt: entries[1].loggedAt, sourceSessionId: 'session-1' },
+      {
+        recordType: 'max_distance',
+        value: 350,
+        achievedAt: entries[1].loggedAt,
+        sourceSessionId: 'session-1',
+        previousValue: null,
+      },
     ])
   })
 
@@ -151,7 +158,13 @@ describe('detectSessionRecords', () => {
     ]
     const records = detectSessionRecords('session-1', entries, existing)
     expect(records).toEqual([
-      { recordType: 'putting_percentage_15ft', value: 90, achievedAt: entries[0].loggedAt, sourceSessionId: 'session-1' },
+      {
+        recordType: 'putting_percentage_15ft',
+        value: 90,
+        achievedAt: entries[0].loggedAt,
+        sourceSessionId: 'session-1',
+        previousValue: 80,
+      },
     ])
   })
 
@@ -162,12 +175,49 @@ describe('detectSessionRecords', () => {
     ]
     const records = detectSessionRecords('session-1', entries, [])
     expect(records).toEqual([
-      { recordType: 'putting_percentage_15ft', value: 70, achievedAt: '2026-07-16T10:00:00Z', sourceSessionId: 'session-1' },
+      {
+        recordType: 'putting_percentage_15ft',
+        value: 70,
+        achievedAt: '2026-07-16T10:00:00Z',
+        sourceSessionId: 'session-1',
+        previousValue: null,
+      },
     ])
   })
 
   it('returns an empty array when nothing was beaten', () => {
     const entries = [makeEntry({ id: '1', metricType: 'completed_boolean', drillLabel: 'Scramble putts' })]
     expect(detectSessionRecords('session-1', entries, [])).toEqual([])
+  })
+})
+
+describe('summarizeTrend', () => {
+  it('returns null with fewer than two points', () => {
+    expect(summarizeTrend([])).toBeNull()
+    expect(summarizeTrend([{ date: '2026-07-10', value: 50 }])).toBeNull()
+  })
+
+  it('reports improving when the change is a positive change past the threshold', () => {
+    const points = [
+      { date: '2026-07-10', value: 50 },
+      { date: '2026-07-16', value: 65 },
+    ]
+    expect(summarizeTrend(points)).toEqual({ direction: 'improving', change: 15 })
+  })
+
+  it('reports declining when the change is a negative change past the threshold', () => {
+    const points = [
+      { date: '2026-07-10', value: 70 },
+      { date: '2026-07-16', value: 60 },
+    ]
+    expect(summarizeTrend(points)).toEqual({ direction: 'declining', change: -10 })
+  })
+
+  it('reports stable when the change is within the noise threshold', () => {
+    const points = [
+      { date: '2026-07-10', value: 70 },
+      { date: '2026-07-16', value: 72 },
+    ]
+    expect(summarizeTrend(points)).toEqual({ direction: 'stable', change: 2 })
   })
 })

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { calculateStreaks } from '../../../domain/progress/progressCalculations'
+import { calculateStreaks, toDateKey } from '../../../domain/progress/progressCalculations'
 import { useCompletedPracticeSessions } from './usePracticeHistory'
 
 export function useStreaks() {
@@ -11,5 +11,11 @@ export function useStreaks() {
     return calculateStreaks(timestamps, new Date().toISOString())
   }, [sessionsQuery.data])
 
-  return { ...sessionsQuery, streaks }
+  const practicedToday = useMemo(() => {
+    if (!sessionsQuery.data) return false
+    const todayKey = toDateKey(new Date().toISOString())
+    return sessionsQuery.data.some((session) => toDateKey(session.completedAt ?? session.startedAt) === todayKey)
+  }, [sessionsQuery.data])
+
+  return { ...sessionsQuery, streaks, practicedToday }
 }

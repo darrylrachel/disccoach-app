@@ -46,22 +46,31 @@ async function upsertPersonalRecords(
   return data.map(toDomainPersonalRecord)
 }
 
+export interface PersonalRecordsUpdateResult {
+  records: PersonalRecord[]
+  // The subset that this specific session actually beat, previous value
+  // included, so the caller can render a "you just broke a PR" moment
+  // without a second query.
+  brokenRecords: NewPersonalRecordInput[]
+}
+
 // Invoked after a session is marked completed: compares that session's
 // results against the user's current bests and upserts any that were
-// beaten. Returns the user's full, up-to-date set of personal records.
+// beaten.
 export async function updatePersonalRecordsForSession(
   userId: string,
   sessionId: string,
-): Promise<PersonalRecord[]> {
+): Promise<PersonalRecordsUpdateResult> {
   const [logEntries, existingRecords] = await Promise.all([
     listSessionLogEntries(sessionId),
     listPersonalRecords(userId),
   ])
 
   const candidates = detectSessionRecords(sessionId, logEntries, existingRecords)
-  if (candidates.length === 0) return existingRecords
+  if (candidates.length === 0) return { records: existingRecords, brokenRecords: [] }
 
   const updated = await upsertPersonalRecords(userId, candidates)
   const updatedTypes = new Set(updated.map((record) => record.recordType))
-  return [...existingRecords.filter((record) => !updatedTypes.has(record.recordType)), ...updated]
+  const records = [...existingRecords.filter((record) => !updatedTypes.has(record.recordType)), ...updated]
+  return { records, brokenRecords: candidates }
 }

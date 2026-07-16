@@ -27,6 +27,11 @@ export interface NewPersonalRecordInput {
   value: number
   achievedAt: string
   sourceSessionId: string | null
+  // The user's best value for this record type before this session, or null
+  // if this is the first time it's been set. Carried alongside the upsert
+  // payload so callers can render a "previous vs. new" celebration without a
+  // second round trip.
+  previousValue: number | null
 }
 
 export interface StreakSummary {
@@ -37,4 +42,13 @@ export interface StreakSummary {
 export interface TrendPoint {
   date: string
   value: number
+}
+
+export type TrendDirection = 'improving' | 'stable' | 'declining'
+
+export interface TrendSummary {
+  direction: TrendDirection
+  // Change from the first to the last point in the series, in the trend's
+  // own units (percentage points for putting trends).
+  change: number
 }

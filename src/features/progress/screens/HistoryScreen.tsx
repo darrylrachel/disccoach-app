@@ -4,6 +4,9 @@ import type { PracticeCategory } from '../../../domain/practice/models'
 import { CATEGORY_LABELS, CATEGORY_ORDER } from '../../practice/categoryLabels'
 import { usePracticeHistory } from '../hooks/usePracticeHistory'
 
+const EMPTY_STATE_CLASS =
+  'flex items-center justify-between gap-3 rounded-xl border border-dashed border-white/15 bg-white/5 px-4 py-4 text-sm text-white/60 transition-colors hover:border-white/30 hover:text-white/80'
+
 function formatSessionDate(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
 }
@@ -13,6 +16,9 @@ export function HistoryScreen() {
   const [categoryFilter, setCategoryFilter] = useState<PracticeCategory | null>(null)
 
   const filteredSessions = sessions?.filter((session) => !categoryFilter || session.category === categoryFilter)
+  const emptyStateMessage = categoryFilter
+    ? `No ${CATEGORY_LABELS[categoryFilter].toLowerCase()} sessions yet.`
+    : 'No sessions yet — your first practice session will show up here.'
 
   return (
     <div className="px-6 py-8 pb-24">
@@ -49,7 +55,10 @@ export function HistoryScreen() {
       {isLoading && <p className="text-white/50">Loading history…</p>}
       {isError && <p className="text-red-400">Unable to load your practice history.</p>}
       {!isLoading && !isError && filteredSessions?.length === 0 && (
-        <p className="text-white/50">No sessions here yet.</p>
+        <Link to="/practice" className={EMPTY_STATE_CLASS}>
+          <span>{emptyStateMessage}</span>
+          <span className="shrink-0 font-medium text-brand-green">Start practice →</span>
+        </Link>
       )}
 
       <div className="flex flex-col gap-2">
@@ -57,7 +66,7 @@ export function HistoryScreen() {
           <Link
             key={session.id}
             to={`/practice/${session.id}/summary`}
-            className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3"
+            className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-4 py-3 transition-colors hover:border-white/20"
           >
             <div>
               <p className="font-medium text-white">{CATEGORY_LABELS[session.category]}</p>
