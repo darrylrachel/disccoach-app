@@ -89,7 +89,7 @@ function DiscDetailForm({ discId, initial, onDeleted }: DiscDetailFormProps) {
 
       {catalogEntry && (
         <div className="mb-6 rounded-xl border border-white/10 bg-white/5 p-4">
-          <p className="mb-2 text-xs uppercase tracking-wide text-white/40">Catalog numbers</p>
+          <p className="mb-2 text-xs uppercase tracking-wide text-white/55">Catalog numbers</p>
           <div className="flex gap-4 text-sm text-white">
             <span>Speed {catalogEntry.speed}</span>
             <span>Glide {catalogEntry.glide}</span>
@@ -100,7 +100,7 @@ function DiscDetailForm({ discId, initial, onDeleted }: DiscDetailFormProps) {
       )}
 
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-        <p className="text-xs uppercase tracking-wide text-white/40">
+        <p className="text-xs uppercase tracking-wide text-white/55">
           Personal numbers (optional — overrides catalog)
         </p>
         <div className="grid grid-cols-4 gap-2">
@@ -186,7 +186,7 @@ function DiscDetailForm({ discId, initial, onDeleted }: DiscDetailFormProps) {
       </form>
 
       <div className="mt-8 border-t border-white/10 pt-6">
-        <p className="mb-3 text-xs uppercase tracking-wide text-white/40">Lifecycle</p>
+        <p className="mb-3 text-xs uppercase tracking-wide text-white/55">Lifecycle</p>
         <div className="flex flex-wrap gap-2">
           {(['active', 'retired', 'lost', 'traded'] as DiscStatus[])
             .filter((s) => s !== disc.status)
@@ -196,7 +196,7 @@ function DiscDetailForm({ discId, initial, onDeleted }: DiscDetailFormProps) {
                 type="button"
                 onClick={() => changeStatus.mutate(s)}
                 disabled={changeStatus.isPending}
-                className="rounded-lg border border-white/20 px-3 py-2 text-sm text-white transition-colors hover:border-white/40 disabled:opacity-50"
+                className="inline-flex min-h-11 items-center justify-center rounded-lg border border-white/20 px-3 py-2 text-sm text-white transition-colors hover:border-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green disabled:opacity-50"
               >
                 Mark {s}
               </button>
@@ -205,7 +205,7 @@ function DiscDetailForm({ discId, initial, onDeleted }: DiscDetailFormProps) {
             type="button"
             onClick={handleDelete}
             disabled={deleteDisc.isPending}
-            className="rounded-lg border border-red-500/40 px-3 py-2 text-sm text-red-400 transition-colors hover:border-red-500/70 disabled:opacity-50"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg border border-red-500/40 px-3 py-2 text-sm text-red-400 transition-colors hover:border-red-500/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 disabled:opacity-50"
           >
             Delete disc
           </button>

@@ -163,7 +163,7 @@ export function DashboardScreen() {
                   key={distance}
                   type="button"
                   onClick={() => setSelectedDistance(distance)}
-                  className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+                  className={`inline-flex min-h-11 items-center justify-center rounded-full px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green ${
                     distance === effectiveDistance
                       ? 'bg-brand-green text-black'
                       : 'border border-white/20 text-white/60 hover:border-white/40'

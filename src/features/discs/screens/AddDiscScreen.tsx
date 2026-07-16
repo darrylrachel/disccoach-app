@@ -46,7 +46,7 @@ export function AddDiscScreen() {
         <button
           type="button"
           onClick={() => setMode('catalog')}
-          className={`flex-1 rounded-md py-2 text-sm font-semibold transition-colors ${
+          className={`flex min-h-11 flex-1 items-center justify-center rounded-md py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green ${
             mode === 'catalog' ? 'bg-brand-green text-black' : 'text-white/60'
           }`}
         >
@@ -55,7 +55,7 @@ export function AddDiscScreen() {
         <button
           type="button"
           onClick={() => setMode('manual')}
-          className={`flex-1 rounded-md py-2 text-sm font-semibold transition-colors ${
+          className={`flex min-h-11 flex-1 items-center justify-center rounded-md py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green ${
             mode === 'manual' ? 'bg-brand-green text-black' : 'text-white/60'
           }`}
         >
@@ -94,7 +94,7 @@ export function AddDiscScreen() {
                   <span className="font-semibold">
                     {entry.manufacturer} {entry.moldName}
                   </span>
-                  <span className="ml-2 text-white/40">
+                  <span className="ml-2 text-white/55">
                     {entry.speed}/{entry.glide}/{entry.turn}/{entry.fade}
                   </span>
                 </button>

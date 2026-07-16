@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Button } from '../../../components/ui/Button'
+import { InlineError } from '../../../components/ui/InlineError'
 import { Input } from '../../../components/ui/Input'
 import { metricTypeForCategory, type DrillStep, type PracticeCategory } from '../../../domain/practice/models'
 import { usePracticeSession, useSessionLogEntries } from '../hooks/usePracticeSession'
@@ -117,6 +118,13 @@ function ActiveSessionContent({ sessionId, category, drills, completedCount }: A
     )
   }
 
+  function retryLogEntry() {
+    if (!logEntry.variables) return
+    logEntry.mutate(logEntry.variables, {
+      onSuccess: () => finishIfLastDrill(completedCount + 1 >= drills.length),
+    })
+  }
+
   function handleAbandon() {
     if (!confirm('Abandon this session? Your progress so far will be saved.')) return
     abandonSession.mutate(sessionId, { onSuccess: () => navigate('/practice') })
@@ -135,7 +143,7 @@ function ActiveSessionContent({ sessionId, category, drills, completedCount }: A
           type="button"
           onClick={handleAbandon}
           disabled={abandonSession.isPending}
-          className="shrink-0 rounded-full border border-red-500/40 px-3 py-1 text-xs text-red-400 transition-colors hover:border-red-500/70 disabled:opacity-50"
+          className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-red-500/40 px-3 py-1 text-xs text-red-400 transition-colors hover:border-red-500/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 disabled:opacity-50"
         >
           Abandon
         </button>
@@ -201,7 +209,13 @@ function ActiveSessionContent({ sessionId, category, drills, completedCount }: A
             </Button>
           )}
 
-          {logEntry.isError && <p className="mt-3 text-sm text-red-400">Unable to log that result.</p>}
+          {logEntry.isError && (
+            <InlineError
+              message="Unable to log that result."
+              onRetry={retryLogEntry}
+              retrying={logEntry.isPending}
+            />
+          )}
         </div>
       )}
     </div>

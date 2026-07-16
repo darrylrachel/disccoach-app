@@ -28,7 +28,7 @@ export function HistoryScreen() {
         <button
           type="button"
           onClick={() => setCategoryFilter(null)}
-          className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+          className={`inline-flex min-h-11 items-center justify-center rounded-full px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green ${
             categoryFilter === null
               ? 'bg-brand-green text-black'
               : 'border border-white/20 text-white/60 hover:border-white/40'
@@ -41,7 +41,7 @@ export function HistoryScreen() {
             key={category}
             type="button"
             onClick={() => setCategoryFilter(category)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+            className={`inline-flex min-h-11 items-center justify-center rounded-full px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green ${
               categoryFilter === category
                 ? 'bg-brand-green text-black'
                 : 'border border-white/20 text-white/60 hover:border-white/40'

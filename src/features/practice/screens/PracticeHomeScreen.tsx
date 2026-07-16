@@ -22,7 +22,7 @@ function OptionButton({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-xl border px-4 py-3 text-sm font-semibold transition-colors ${
+      className={`min-h-11 rounded-xl border px-4 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green ${
         active
           ? 'border-brand-green bg-brand-green/15 text-brand-green'
           : 'border-white/15 bg-white/5 text-white/70 hover:border-white/30'
@@ -101,7 +101,7 @@ export function PracticeHomeScreen() {
         <>
           <p className="mb-8 text-white/50">How much time do you have?</p>
 
-          <p className="mb-3 text-xs uppercase tracking-wide text-white/40">Time available</p>
+          <p className="mb-3 text-xs uppercase tracking-wide text-white/55">Time available</p>
           <div className="mb-8 grid grid-cols-3 gap-3">
             {DURATION_OPTIONS.map((minutes) => (
               <OptionButton key={minutes} active={duration === minutes} onClick={() => setDuration(minutes)}>
@@ -110,7 +110,7 @@ export function PracticeHomeScreen() {
             ))}
           </div>
 
-          <p className="mb-3 text-xs uppercase tracking-wide text-white/40">Focus</p>
+          <p className="mb-3 text-xs uppercase tracking-wide text-white/55">Focus</p>
           <div className="mb-8 grid grid-cols-2 gap-3">
             {CATEGORY_ORDER.map((c) => (
               <OptionButton key={c} active={category === c} onClick={() => setCategory(c)}>

@@ -148,7 +148,7 @@ function BagDetailContent({ bagId, bag, bagDiscs, analysis, onDeleted }: BagDeta
           <button
             type="button"
             onClick={() => setIsEditing(true)}
-            className="shrink-0 rounded-lg border border-white/20 px-3 py-1.5 text-sm text-white/70 transition-colors hover:border-white/40"
+            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg border border-white/20 px-3 py-1.5 text-sm text-white/70 transition-colors hover:border-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green"
           >
             Rename
           </button>
@@ -165,7 +165,7 @@ function BagDetailContent({ bagId, bag, bagDiscs, analysis, onDeleted }: BagDeta
             type="button"
             onClick={() => setActiveBag.mutate(bagId)}
             disabled={setActiveBag.isPending}
-            className="rounded-full border border-white/20 px-3 py-1 text-xs text-white/60 transition-colors hover:border-white/40 disabled:opacity-50"
+            className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/20 px-3 py-1 text-xs text-white/60 transition-colors hover:border-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green disabled:opacity-50"
           >
             Set as default
           </button>
@@ -174,7 +174,7 @@ function BagDetailContent({ bagId, bag, bagDiscs, analysis, onDeleted }: BagDeta
           type="button"
           onClick={handleDeleteBag}
           disabled={deleteBag.isPending}
-          className="rounded-full border border-red-500/40 px-3 py-1 text-xs text-red-400 transition-colors hover:border-red-500/70 disabled:opacity-50"
+          className="inline-flex min-h-11 items-center justify-center rounded-full border border-red-500/40 px-3 py-1 text-xs text-red-400 transition-colors hover:border-red-500/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 disabled:opacity-50"
         >
           Delete bag
         </button>
@@ -187,7 +187,7 @@ function BagDetailContent({ bagId, bag, bagDiscs, analysis, onDeleted }: BagDeta
       )}
 
       <div className="mb-6">
-        <p className="mb-3 text-xs uppercase tracking-wide text-white/40">Add a disc</p>
+        <p className="mb-3 text-xs uppercase tracking-wide text-white/55">Add a disc</p>
         <form onSubmit={handleAddDisc} className="flex flex-col gap-3">
           <Select
             id="addDiscSelect"
@@ -211,7 +211,7 @@ function BagDetailContent({ bagId, bag, bagDiscs, analysis, onDeleted }: BagDeta
         {addDiscToBag.isError && <p className="mt-2 text-sm text-red-400">Unable to add that disc.</p>}
       </div>
 
-      <p className="mb-3 text-xs uppercase tracking-wide text-white/40">Bag contents</p>
+      <p className="mb-3 text-xs uppercase tracking-wide text-white/55">Bag contents</p>
       {bagDiscs.length === 0 && <p className="text-white/50">No discs in this bag yet.</p>}
 
       <div className="flex flex-col gap-6">
@@ -243,7 +243,8 @@ function BagDetailContent({ bagId, bag, bagDiscs, analysis, onDeleted }: BagDeta
                           slot: e.target.value as BagSlot,
                         })
                       }
-                      className="rounded-lg border border-white/15 bg-white/5 px-2 py-1.5 text-xs text-white outline-none focus:border-brand-green"
+                      aria-label="Flight slot"
+                      className="rounded-lg border border-white/15 bg-white/5 px-2 py-1.5 text-xs text-white outline-none focus:border-brand-green focus-visible:ring-2 focus-visible:ring-brand-green"
                     >
                       {SLOT_ORDER.map((s) => (
                         <option key={s} value={s}>
@@ -255,7 +256,7 @@ function BagDetailContent({ bagId, bag, bagDiscs, analysis, onDeleted }: BagDeta
                       type="button"
                       onClick={() => removeDiscFromBag.mutate(bd.bagDisc.id)}
                       disabled={removeDiscFromBag.isPending}
-                      className="shrink-0 text-xs text-red-400 transition-colors hover:text-red-300 disabled:opacity-50"
+                      className="shrink-0 text-xs text-red-400 transition-colors hover:text-red-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-400 disabled:opacity-50"
                     >
                       Remove
                     </button>

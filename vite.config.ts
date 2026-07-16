@@ -15,8 +15,9 @@ export default defineConfig({
     tailwindcss(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg'],
+      includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png'],
       manifest: {
+        id: '/',
         name: 'DiscCoach',
         short_name: 'DiscCoach',
         description: 'The personal training platform for disc golfers.',
@@ -25,20 +26,29 @@ export default defineConfig({
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
-        // Placeholder brand mark (green ring / gold disc). Swap for real
-        // production app icons (incl. maskable PNGs) in Phase 5 polish.
         icons: [
-          {
-            src: 'icons/icon.svg',
-            sizes: 'any',
-            type: 'image/svg+xml',
-          },
+          { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: 'icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: 'icons/icon-maskable-192.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+          { src: 'icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
       workbox: {
-        // Cache-first for static assets and the disc catalog reference data;
-        // navigation/API calls stay network-first via default runtime behavior.
-        globPatterns: ['**/*.{js,css,html,svg,ico}'],
+        globPatterns: ['**/*.{js,css,html,svg,ico,png}'],
+        runtimeCaching: [
+          // Reference data (disc catalog, practice templates) is shared/read-only,
+          // so it's safe to serve from cache instantly and refresh in the background.
+          // Personal/mutable data (discs, bags, sessions, auth) is deliberately left
+          // out — it must stay network-only so users never act on stale state.
+          {
+            urlPattern: ({ url }) => /\/rest\/v1\/(disc_catalog|practice_session_templates)$/.test(url.pathname),
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'reference-data',
+              expiration: { maxEntries: 50, maxAgeSeconds: 60 * 60 * 24 * 7 },
+            },
+          },
+        ],
       },
     }),
   ],

@@ -29,7 +29,7 @@ function StatTile({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-4">
       <p className="text-2xl font-bold text-white">{value}</p>
-      <p className="text-xs uppercase tracking-wide text-white/40">{label}</p>
+      <p className="text-xs uppercase tracking-wide text-white/55">{label}</p>
     </div>
   )
 }
@@ -37,7 +37,7 @@ function StatTile({ label, value }: { label: string; value: string | number }) {
 function SectionCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-      <p className="mb-3 text-xs uppercase tracking-wide text-white/40">{title}</p>
+      <p className="mb-3 text-xs uppercase tracking-wide text-white/55">{title}</p>
       {children}
     </div>
   )
@@ -118,7 +118,7 @@ export function BagDashboard({ analysis }: BagDashboardProps) {
               className={`rounded-full px-3 py-1 text-xs font-medium ${
                 shape.covered
                   ? 'bg-brand-green/15 text-brand-green'
-                  : 'bg-white/5 text-white/40'
+                  : 'bg-white/5 text-white/55'
               }`}
             >
               {SHOT_SHAPE_LABELS[shape.shape]}

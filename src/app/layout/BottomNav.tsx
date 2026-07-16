@@ -17,7 +17,7 @@ export function BottomNav() {
               to={item.to}
               end={item.end}
               className={({ isActive }) =>
-                `flex flex-col items-center gap-1 py-3 text-xs font-medium transition-colors ${
+                `flex min-h-11 flex-col items-center justify-center gap-1 py-3 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green ${
                   isActive ? 'text-brand-green' : 'text-white/50'
                 }`
               }

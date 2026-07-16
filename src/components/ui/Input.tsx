@@ -10,7 +10,7 @@ export function Input({ label, id, className = '', ...props }: InputProps) {
       {label}
       <input
         id={id}
-        className={`rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-white placeholder:text-white/30 outline-none focus:border-brand-green ${className}`}
+        className={`min-h-11 rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-white placeholder:text-white/45 outline-none focus:border-brand-green focus-visible:ring-2 focus-visible:ring-brand-green ${className}`}
         {...props}
       />
     </label>

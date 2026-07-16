@@ -23,8 +23,21 @@ export function TrendSparkline({ points, height = 80 }: TrendSparklineProps) {
 
   const path = coords.map((c, i) => `${i === 0 ? 'M' : 'L'}${c.x.toFixed(1)},${c.y.toFixed(1)}`).join(' ')
 
+  const first = values[0]
+  const last = values[values.length - 1]
+  const trendDescription =
+    values.length > 1
+      ? `Trend chart from ${first} to ${last} across ${values.length} sessions.`
+      : `Single data point at ${first}.`
+
   return (
-    <svg viewBox={`0 0 ${WIDTH} ${height}`} className="h-20 w-full overflow-visible" preserveAspectRatio="none">
+    <svg
+      viewBox={`0 0 ${WIDTH} ${height}`}
+      className="h-20 w-full overflow-visible"
+      preserveAspectRatio="none"
+      role="img"
+      aria-label={trendDescription}
+    >
       <path
         d={path}
         fill="none"

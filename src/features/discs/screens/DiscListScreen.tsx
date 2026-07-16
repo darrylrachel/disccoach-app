@@ -39,7 +39,7 @@ export function DiscListScreen() {
         <h1 className="text-2xl font-bold text-white">Discs</h1>
         <Link
           to="/discs/new"
-          className="rounded-lg bg-brand-green px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-brand-green/90"
+          className="inline-flex min-h-11 items-center justify-center rounded-lg bg-brand-green px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-brand-green/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green"
         >
           Add disc
         </Link>

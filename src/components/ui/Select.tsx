@@ -10,7 +10,7 @@ export function Select({ label, id, className = '', children, ...props }: Select
       {label}
       <select
         id={id}
-        className={`rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-white outline-none focus:border-brand-green ${className}`}
+        className={`min-h-11 rounded-lg border border-white/15 bg-white/5 px-3 py-2.5 text-white outline-none focus:border-brand-green focus-visible:ring-2 focus-visible:ring-brand-green ${className}`}
         {...props}
       >
         {children}

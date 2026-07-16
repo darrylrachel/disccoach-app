@@ -34,7 +34,7 @@ export function BagListScreen() {
         <button
           type="button"
           onClick={() => setIsCreating((v) => !v)}
-          className="rounded-lg bg-brand-green px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-brand-green/90"
+          className="min-h-11 rounded-lg bg-brand-green px-4 py-2 text-sm font-semibold text-black transition-colors hover:bg-brand-green/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green"
         >
           {isCreating ? 'Cancel' : 'New bag'}
         </button>
@@ -87,7 +87,7 @@ export function BagListScreen() {
                 type="button"
                 onClick={() => setActiveBag.mutate(bag.id)}
                 disabled={setActiveBag.isPending}
-                className="shrink-0 rounded-full border border-white/20 px-3 py-1 text-xs text-white/60 transition-colors hover:border-white/40 disabled:opacity-50"
+                className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-white/20 px-3 py-1 text-xs text-white/60 transition-colors hover:border-white/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-green disabled:opacity-50"
               >
                 Set default
               </button>

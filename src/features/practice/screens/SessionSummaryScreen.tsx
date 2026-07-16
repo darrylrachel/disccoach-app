@@ -49,7 +49,7 @@ function PersonalRecordCelebration({ records, visible }: { records: NewPersonalR
             <span className="text-white/50">
               {record.previousValue !== null ? recordValueLabel(record.recordType, record.previousValue) : 'First attempt'}
             </span>
-            <span className="text-white/30">→</span>
+            <span className="text-white/45">→</span>
             <span className="font-semibold text-brand-gold">{recordValueLabel(record.recordType, record.value)}</span>
             <span className="ml-auto rounded-full bg-brand-gold/20 px-2 py-0.5 text-xs font-medium text-brand-gold">
               {recordImprovementLabel(record.recordType, record.previousValue, record.value)}
