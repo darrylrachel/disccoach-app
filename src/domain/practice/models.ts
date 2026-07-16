@@ -26,12 +26,18 @@ export interface PracticeSession {
   status: SessionStatus
   startedAt: string
   completedAt: string | null
+  // Set when this session was launched from a training program day (see
+  // domain/programs/) rather than directly from Practice Mode.
+  programDayId: string | null
+  enrollmentId: string | null
 }
 
 export interface NewPracticeSessionInput {
   templateId: string | null
   category: PracticeCategory
   durationMinutes: number
+  programDayId?: string | null
+  enrollmentId?: string | null
 }
 
 export interface PracticeLogEntry {

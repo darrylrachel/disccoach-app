@@ -6,6 +6,7 @@ import {
   createPracticeSession,
 } from '../../../services/practice.service'
 import { updatePersonalRecordsForSession } from '../../../services/progress.service'
+import { recordProgramDayCompletion } from '../../../services/programs.service'
 import type { NewPracticeLogEntryInput, NewPracticeSessionInput } from '../../../domain/practice/models'
 import { useSession } from '../../auth/hooks/useSession'
 
@@ -41,6 +42,9 @@ export function useCompletePracticeSession() {
     mutationFn: async (sessionId: string) => {
       const session = await completePracticeSession(sessionId)
       const { brokenRecords } = await updatePersonalRecordsForSession(user!.id, sessionId)
+      // Advances training-program progress when this session was launched
+      // from a program day; a no-op for ordinary Practice Mode sessions.
+      await recordProgramDayCompletion(session)
       return { session, brokenRecords }
     },
     // Defined on the hook (not passed to a `.mutate()` call) so it's
@@ -54,6 +58,11 @@ export function useCompletePracticeSession() {
       queryClient.invalidateQueries({ queryKey: ['personalRecords', user?.id] })
       queryClient.invalidateQueries({ queryKey: ['practiceSessions', user?.id] })
       queryClient.invalidateQueries({ queryKey: ['puttingLogEntries', user?.id] })
+      if (session.enrollmentId) {
+        queryClient.invalidateQueries({ queryKey: ['activeEnrollment', user?.id] })
+        queryClient.invalidateQueries({ queryKey: ['programCompletions', session.enrollmentId] })
+        queryClient.invalidateQueries({ queryKey: ['enrollmentHistory', user?.id] })
+      }
     },
   })
 }

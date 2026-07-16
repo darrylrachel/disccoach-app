@@ -319,3 +319,95 @@ values
     {"label": "Basket accuracy from 150ft", "reps": 20},
     {"label": "Circle 2 approach shots under pressure", "reps": 15}
   ]'::jsonb);
+
+-- Training program library: 5 curated multi-week programs built entirely
+-- from the template library above (program_days.template_id references
+-- practice_session_templates.id) — no drill logic is duplicated here.
+insert into public.training_programs
+  (name, description, category, difficulty, duration_weeks, sessions_per_week, estimated_minutes)
+values
+  (
+    'Putting Fundamentals',
+    'Build a repeatable, confident putting stroke from inside the circle out. Four weeks of focused reps to groove your mechanics.',
+    'putting', 'beginner', 4, 2, 20
+  ),
+  (
+    'Distance Builder',
+    'A six-week progression from clean mechanics to max-effort throws, building real backhand and forehand distance.',
+    'distance', 'intermediate', 6, 2, 45
+  ),
+  (
+    'Accuracy & Fairway Control',
+    'Sharpen your line control and basket accuracy with four weeks of gate work and approach precision.',
+    'accuracy', 'intermediate', 4, 2, 45
+  ),
+  (
+    'Tournament Preparation',
+    'A focused two-week tune-up combining pressure putting, scoring-zone accuracy, and course-simulation field work.',
+    'mixed', 'advanced', 2, 3, 30
+  ),
+  (
+    'Forehand Fundamentals',
+    'Develop a reliable forehand from grip through flex shots, blending distance and field work over four weeks.',
+    'mixed', 'beginner', 4, 2, 25
+  );
+
+-- Program days: (program_name, week, day, title, description, template_name)
+-- joined against training_programs and practice_session_templates by name.
+insert into public.program_days (program_id, week_number, day_number, title, description, template_id)
+select p.id, v.week_number, v.day_number, v.title, v.description, t.id
+from (values
+  -- Putting Fundamentals
+  ('Putting Fundamentals', 1, 1, 'Putting Mechanics: Foundations', 'Build a repeatable putting stroke with short-range makes.', '20-Minute Beginner Putting Tune-Up'),
+  ('Putting Fundamentals', 1, 2, 'Stroke Consistency', 'Repeat the same reps to start grooving your form.', '20-Minute Beginner Putting Tune-Up'),
+  ('Putting Fundamentals', 2, 1, 'Building Range', 'Add distance while keeping the same clean release.', '20-Minute Beginner Putting Tune-Up'),
+  ('Putting Fundamentals', 2, 2, 'Confidence Circle', 'Volume reps from inside the circle to build trust in your stroke.', '20-Minute Beginner Putting Tune-Up'),
+  ('Putting Fundamentals', 3, 1, 'Stepping Up: Intermediate Range', 'Move out to intermediate putting distances.', '20-Minute Intermediate Putting Tune-Up'),
+  ('Putting Fundamentals', 3, 2, 'Extended Range Reps', 'More volume at the new range to lock it in.', '20-Minute Intermediate Putting Tune-Up'),
+  ('Putting Fundamentals', 4, 1, 'Pressure Prep', 'Simulate on-course pressure with focused makes.', '20-Minute Intermediate Putting Tune-Up'),
+  ('Putting Fundamentals', 4, 2, 'Putting Fundamentals Checkpoint', 'Final session of the program — see how far your stroke has come.', '20-Minute Intermediate Putting Tune-Up'),
+
+  -- Distance Builder
+  ('Distance Builder', 1, 1, 'Form Fundamentals', 'No-disc and short-pull reps to clean up your mechanics first.', '20-Minute Beginner Distance Session'),
+  ('Distance Builder', 1, 2, 'Power Transfer Basics', 'Longer session focused on transferring rotation into the disc.', '45-Minute Beginner Distance Session'),
+  ('Distance Builder', 2, 1, 'Backhand Focus', 'Volume backhand reps to build the base pattern.', '45-Minute Beginner Distance Session'),
+  ('Distance Builder', 2, 2, 'Forehand Focus', 'Extended session building your forehand alongside backhand.', '60-Minute Beginner Distance Session'),
+  ('Distance Builder', 3, 1, 'Intermediate Field Reps', 'Step up to intermediate volume and effort.', '45-Minute Intermediate Distance Session'),
+  ('Distance Builder', 3, 2, 'Max Effort Introduction', 'First max-effort throws — record your best.', '45-Minute Intermediate Distance Session'),
+  ('Distance Builder', 4, 1, 'Distance Volume Day', 'High rep count at intermediate intensity.', '60-Minute Intermediate Distance Session'),
+  ('Distance Builder', 4, 2, 'Off-Hand Development', 'Round out your game with off-hand throws.', '60-Minute Intermediate Distance Session'),
+  ('Distance Builder', 5, 1, 'Advanced Max Effort', 'Push for new personal bests on both wings.', '45-Minute Advanced Distance Session'),
+  ('Distance Builder', 5, 2, 'Standstill vs. Run-Up', 'Compare standstill and run-up throws for extra yardage.', '45-Minute Advanced Distance Session'),
+  ('Distance Builder', 6, 1, 'Peak Distance Day', 'Full-volume advanced session — go for max distance.', '60-Minute Advanced Distance Session'),
+  ('Distance Builder', 6, 2, 'Distance Builder Checkpoint', 'Final session of the program — record your results.', '60-Minute Advanced Distance Session'),
+
+  -- Accuracy & Fairway Control
+  ('Accuracy & Fairway Control', 1, 1, 'Gate Control Basics', 'Start with short gate throws to build line awareness.', '20-Minute Beginner Accuracy Session'),
+  ('Accuracy & Fairway Control', 1, 2, 'Basket Accuracy Warm-Up', 'Basket-focused accuracy from short and mid range.', '45-Minute Beginner Accuracy Session'),
+  ('Accuracy & Fairway Control', 2, 1, 'Extending Your Range', 'Longer session adding a third distance tier.', '60-Minute Beginner Accuracy Session'),
+  ('Accuracy & Fairway Control', 2, 2, 'Intermediate Gate Work', 'Step up to intermediate accuracy targets.', '20-Minute Intermediate Accuracy Session'),
+  ('Accuracy & Fairway Control', 3, 1, 'Line Control', 'Basket accuracy from extended range.', '45-Minute Intermediate Accuracy Session'),
+  ('Accuracy & Fairway Control', 3, 2, 'Narrow Gate Precision', 'Tighten your gates for sharper control.', '60-Minute Intermediate Accuracy Session'),
+  ('Accuracy & Fairway Control', 4, 1, 'Advanced Basket Accuracy', 'Long-range basket accuracy at advanced intensity.', '45-Minute Advanced Accuracy Session'),
+  ('Accuracy & Fairway Control', 4, 2, 'Fairway Control Checkpoint', 'Final session of the program, including approach shots under pressure.', '60-Minute Advanced Accuracy Session'),
+
+  -- Tournament Preparation
+  ('Tournament Preparation', 1, 1, 'Pressure Putting', 'Short, focused putting reps under simulated pressure.', '20-Minute Advanced Putting Tune-Up'),
+  ('Tournament Preparation', 1, 2, 'Scoring Zone Accuracy', 'Approach accuracy from scoring range.', '45-Minute Advanced Accuracy Session'),
+  ('Tournament Preparation', 1, 3, 'Course-Simulation Field Work', 'Varied lies and shot shapes like you will see on the course.', '45-Minute Advanced Field Work Session'),
+  ('Tournament Preparation', 2, 1, 'Pressure Putts Under Fatigue', 'A longer putting session to build late-round consistency.', '45-Minute Advanced Putting Session'),
+  ('Tournament Preparation', 2, 2, 'Circle 2 Approach Precision', 'High-volume Circle 2 approach work under pressure.', '60-Minute Advanced Accuracy Session'),
+  ('Tournament Preparation', 2, 3, 'Tournament Readiness Checkpoint', 'Final field-work session before you tee off.', '60-Minute Advanced Field Work Session'),
+
+  -- Forehand Fundamentals
+  ('Forehand Fundamentals', 1, 1, 'Grip & Release Basics', 'Establish a clean forehand grip and release alongside backhand reps.', '20-Minute Beginner Distance Session'),
+  ('Forehand Fundamentals', 1, 2, 'Forehand Power Reps', 'Build power in your forehand motion.', '45-Minute Beginner Distance Session'),
+  ('Forehand Fundamentals', 2, 1, 'Forehand Distance Volume', 'Extended volume session to reinforce the motion.', '60-Minute Beginner Distance Session'),
+  ('Forehand Fundamentals', 2, 2, 'Intro to Flex Shots', 'First look at forehand flex shots in the field.', '20-Minute Intermediate Field Work Session'),
+  ('Forehand Fundamentals', 3, 1, 'Forehand Flex Development', 'Build out flex shots alongside other shot shapes.', '45-Minute Intermediate Field Work Session'),
+  ('Forehand Fundamentals', 3, 2, 'Forehand Under Variety', 'Practice your forehand across varied lies.', '60-Minute Intermediate Field Work Session'),
+  ('Forehand Fundamentals', 4, 1, 'Utility Forehand Shots', 'Advanced utility shots that lean on forehand technique.', '45-Minute Advanced Field Work Session'),
+  ('Forehand Fundamentals', 4, 2, 'Forehand Fundamentals Checkpoint', 'Final session of the program — put it all together.', '20-Minute Intermediate Distance Session')
+) as v(program_name, week_number, day_number, title, description, template_name)
+join public.training_programs p on p.name = v.program_name
+join public.practice_session_templates t on t.name = v.template_name;

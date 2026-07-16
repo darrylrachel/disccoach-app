@@ -40,6 +40,8 @@ function toDomainSession(row: SessionRow): PracticeSession {
     status: row.status as SessionStatus,
     startedAt: row.started_at,
     completedAt: row.completed_at,
+    programDayId: row.program_day_id,
+    enrollmentId: row.enrollment_id,
   }
 }
 
@@ -87,6 +89,8 @@ export async function createPracticeSession(
     template_id: input.templateId,
     category: input.category,
     duration_minutes: input.durationMinutes,
+    program_day_id: input.programDayId ?? null,
+    enrollment_id: input.enrollmentId ?? null,
   }
 
   const { data, error } = await supabase

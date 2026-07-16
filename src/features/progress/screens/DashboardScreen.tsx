@@ -14,6 +14,9 @@ import { usePuttingTrend } from '../hooks/usePuttingTrend'
 import { useStreaks } from '../hooks/useStreaks'
 import { recordLabel, recordValueLabel } from '../recordLabels'
 import { TrendSparkline } from '../../../components/charts/TrendSparkline'
+import { programDayLabel } from '../../../domain/programs/models'
+import { useProgram } from '../../programs/hooks/usePrograms'
+import { useActiveEnrollment, useProgramProgress } from '../../programs/hooks/useProgramEnrollment'
 
 const QUICK_ACTIONS = [
   { to: '/practice', icon: '🥏', label: 'Start Practice' },
@@ -52,6 +55,9 @@ export function DashboardScreen() {
   const { analysis: activeBagAnalysis } = useBagAnalysis(activeBag?.id)
 
   const { streaks, practicedToday } = useStreaks()
+  const { data: activeEnrollment } = useActiveEnrollment()
+  const { data: activeProgram } = useProgram(activeEnrollment?.programId)
+  const { progress: activeProgramProgress } = useProgramProgress(activeEnrollment?.programId, activeEnrollment?.id)
   const { data: records } = usePersonalRecords()
   const { data: recentSessions, isLoading: sessionsLoading } = useRecentPracticeSessions(5)
   const { distances, trendFor } = usePuttingTrend()
@@ -110,6 +116,28 @@ export function DashboardScreen() {
         </div>
         {streakMessage && <p className="text-sm text-white/60">{streakMessage}</p>}
       </Card>
+
+      <SectionLabel className="mb-3">Training program</SectionLabel>
+      {activeEnrollment ? (
+        <Link to="/programs/active" className={`mb-8 ${CARD_LINK_CLASS}`}>
+          <div>
+            <p className="font-semibold text-white">{activeProgram?.name ?? 'Training program'}</p>
+            <p className="text-xs text-white/50">
+              {activeProgramProgress?.currentDay
+                ? programDayLabel(activeProgramProgress.currentDay)
+                : 'Program complete'}
+              {' · '}
+              {activeProgramProgress?.percentComplete ?? 0}%
+            </p>
+          </div>
+          <span className="shrink-0 font-medium text-brand-green">Continue training →</span>
+        </Link>
+      ) : (
+        <Link to="/programs" className={`mb-8 ${EMPTY_STATE_CLASS}`}>
+          <span>No active training program — follow a structured plan built around your goals.</span>
+          <span className="shrink-0 font-medium text-brand-green">Start a training program →</span>
+        </Link>
+      )}
 
       <SectionLabel className="mb-3">Active bag</SectionLabel>
       {activeBag ? (
@@ -222,6 +250,21 @@ export function DashboardScreen() {
             )}
           </Link>
         ))}
+      </div>
+
+      <div className="mt-10 flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-white/40">
+        <Link to="/about" className="hover:text-white/70">
+          About
+        </Link>
+        <Link to="/support" className="hover:text-white/70">
+          Support
+        </Link>
+        <Link to="/privacy" className="hover:text-white/70">
+          Privacy
+        </Link>
+        <Link to="/terms" className="hover:text-white/70">
+          Terms
+        </Link>
       </div>
     </div>
   )

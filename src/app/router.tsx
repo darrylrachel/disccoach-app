@@ -33,6 +33,23 @@ const DashboardScreen = lazy(() =>
   import('../features/progress/screens/DashboardScreen').then((m) => ({ default: m.DashboardScreen })),
 )
 const HistoryScreen = lazy(() => import('../features/progress/screens/HistoryScreen').then((m) => ({ default: m.HistoryScreen })))
+const ProgramsScreen = lazy(() =>
+  import('../features/programs/screens/ProgramsScreen').then((m) => ({ default: m.ProgramsScreen })),
+)
+const ProgramDetailScreen = lazy(() =>
+  import('../features/programs/screens/ProgramDetailScreen').then((m) => ({ default: m.ProgramDetailScreen })),
+)
+const ActiveProgramScreen = lazy(() =>
+  import('../features/programs/screens/ActiveProgramScreen').then((m) => ({ default: m.ActiveProgramScreen })),
+)
+const AboutScreen = lazy(() => import('../features/support/screens/AboutScreen').then((m) => ({ default: m.AboutScreen })))
+const SupportScreen = lazy(() =>
+  import('../features/support/screens/SupportScreen').then((m) => ({ default: m.SupportScreen })),
+)
+const PrivacyScreen = lazy(() =>
+  import('../features/support/screens/PrivacyScreen').then((m) => ({ default: m.PrivacyScreen })),
+)
+const TermsScreen = lazy(() => import('../features/support/screens/TermsScreen').then((m) => ({ default: m.TermsScreen })))
 
 export function AppRouter() {
   return (
@@ -59,6 +76,13 @@ export function AppRouter() {
                 <Route path="/practice" element={<PracticeHomeScreen />} />
                 <Route path="/practice/:sessionId" element={<ActiveSessionScreen />} />
                 <Route path="/practice/:sessionId/summary" element={<SessionSummaryScreen />} />
+                <Route path="/programs" element={<ProgramsScreen />} />
+                <Route path="/programs/active" element={<ActiveProgramScreen />} />
+                <Route path="/programs/:programId" element={<ProgramDetailScreen />} />
+                <Route path="/about" element={<AboutScreen />} />
+                <Route path="/support" element={<SupportScreen />} />
+                <Route path="/privacy" element={<PrivacyScreen />} />
+                <Route path="/terms" element={<TermsScreen />} />
               </Route>
             </Route>
           </Route>

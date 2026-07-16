@@ -211,6 +211,30 @@ export type Database = {
           },
         ]
       }
+      feedback: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          message: string
+          user_id: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          message: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          message?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       personal_records: {
         Row: {
           achieved_at: string
@@ -332,7 +356,9 @@ export type Database = {
           completed_at: string | null
           created_at: string
           duration_minutes: number
+          enrollment_id: string | null
           id: string
+          program_day_id: string | null
           started_at: string
           status: string
           template_id: string | null
@@ -344,7 +370,9 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           duration_minutes: number
+          enrollment_id?: string | null
           id?: string
+          program_day_id?: string | null
           started_at?: string
           status?: string
           template_id?: string | null
@@ -356,7 +384,9 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           duration_minutes?: number
+          enrollment_id?: string | null
           id?: string
+          program_day_id?: string | null
           started_at?: string
           status?: string
           template_id?: string | null
@@ -369,6 +399,20 @@ export type Database = {
             columns: ["template_id"]
             isOneToOne: false
             referencedRelation: "practice_session_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "practice_sessions_program_day_id_fkey"
+            columns: ["program_day_id"]
+            isOneToOne: false
+            referencedRelation: "program_days"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "practice_sessions_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "user_program_enrollments"
             referencedColumns: ["id"]
           },
         ]
@@ -414,6 +458,180 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      program_day_completions: {
+        Row: {
+          completed_at: string
+          enrollment_id: string
+          id: string
+          program_day_id: string
+          session_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          enrollment_id: string
+          id?: string
+          program_day_id: string
+          session_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          enrollment_id?: string
+          id?: string
+          program_day_id?: string
+          session_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_day_completions_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "user_program_enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "program_day_completions_program_day_id_fkey"
+            columns: ["program_day_id"]
+            isOneToOne: false
+            referencedRelation: "program_days"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "program_day_completions_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "practice_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      program_days: {
+        Row: {
+          created_at: string
+          day_number: number
+          description: string
+          id: string
+          program_id: string
+          template_id: string
+          title: string
+          week_number: number
+        }
+        Insert: {
+          created_at?: string
+          day_number: number
+          description: string
+          id?: string
+          program_id: string
+          template_id: string
+          title: string
+          week_number: number
+        }
+        Update: {
+          created_at?: string
+          day_number?: number
+          description?: string
+          id?: string
+          program_id?: string
+          template_id?: string
+          title?: string
+          week_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_days_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "training_programs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "program_days_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "practice_session_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      training_programs: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          difficulty: string
+          duration_weeks: number
+          estimated_minutes: number
+          id: string
+          name: string
+          sessions_per_week: number
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description: string
+          difficulty: string
+          duration_weeks: number
+          estimated_minutes: number
+          id?: string
+          name: string
+          sessions_per_week: number
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          difficulty?: string
+          duration_weeks?: number
+          estimated_minutes?: number
+          id?: string
+          name?: string
+          sessions_per_week?: number
+        }
+        Relationships: []
+      }
+      user_program_enrollments: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          program_id: string
+          started_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          program_id: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          program_id?: string
+          started_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_program_enrollments_program_id_fkey"
+            columns: ["program_id"]
+            isOneToOne: false
+            referencedRelation: "training_programs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
