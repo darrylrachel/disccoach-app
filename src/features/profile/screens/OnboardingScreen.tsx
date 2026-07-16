@@ -4,6 +4,7 @@ import { Button } from '../../../components/ui/Button'
 import { Input } from '../../../components/ui/Input'
 import { Select } from '../../../components/ui/Select'
 import { useUpdateProfile } from '../hooks/useProfile'
+import { PRIMARY_GOAL_LABELS, PRIMARY_GOAL_ORDER } from '../profileLabels'
 import type {
   PrimaryGoal,
   SkillLevel,
@@ -72,11 +73,11 @@ export function OnboardingScreen() {
             <option value="" disabled>
               Select a goal
             </option>
-            <option value="increase_distance">Increase distance</option>
-            <option value="improve_putting">Improve putting</option>
-            <option value="lower_scores">Lower scores</option>
-            <option value="learn_forehand">Learn forehand</option>
-            <option value="improve_consistency">Improve consistency</option>
+            {PRIMARY_GOAL_ORDER.map((goal) => (
+              <option key={goal} value={goal}>
+                {PRIMARY_GOAL_LABELS[goal]}
+              </option>
+            ))}
           </Select>
 
           <Select

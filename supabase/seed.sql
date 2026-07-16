@@ -324,32 +324,32 @@ values
 -- from the template library above (program_days.template_id references
 -- practice_session_templates.id) — no drill logic is duplicated here.
 insert into public.training_programs
-  (name, description, category, difficulty, duration_weeks, sessions_per_week, estimated_minutes)
+  (name, description, category, difficulty, duration_weeks, sessions_per_week, estimated_minutes, primary_goal)
 values
   (
     'Putting Fundamentals',
     'Build a repeatable, confident putting stroke from inside the circle out. Four weeks of focused reps to groove your mechanics.',
-    'putting', 'beginner', 4, 2, 20
+    'putting', 'beginner', 4, 2, 20, 'improve_putting'
   ),
   (
     'Distance Builder',
     'A six-week progression from clean mechanics to max-effort throws, building real backhand and forehand distance.',
-    'distance', 'intermediate', 6, 2, 45
+    'distance', 'intermediate', 6, 2, 45, 'increase_distance'
   ),
   (
     'Accuracy & Fairway Control',
     'Sharpen your line control and basket accuracy with four weeks of gate work and approach precision.',
-    'accuracy', 'intermediate', 4, 2, 45
+    'accuracy', 'intermediate', 4, 2, 45, 'improve_consistency'
   ),
   (
     'Tournament Preparation',
     'A focused two-week tune-up combining pressure putting, scoring-zone accuracy, and course-simulation field work.',
-    'mixed', 'advanced', 2, 3, 30
+    'mixed', 'advanced', 2, 3, 30, 'lower_scores'
   ),
   (
     'Forehand Fundamentals',
     'Develop a reliable forehand from grip through flex shots, blending distance and field work over four weeks.',
-    'mixed', 'beginner', 4, 2, 25
+    'mixed', 'beginner', 4, 2, 25, 'learn_forehand'
   );
 
 -- Program days: (program_name, week, day, title, description, template_name)

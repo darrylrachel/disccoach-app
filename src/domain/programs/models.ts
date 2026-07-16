@@ -1,4 +1,5 @@
 import type { PracticeCategory, TemplateDifficulty } from '../practice/models'
+import type { PrimaryGoal } from '../profile/models'
 
 export type ProgramCategory = PracticeCategory | 'mixed'
 export type ProgramDifficulty = TemplateDifficulty
@@ -13,6 +14,9 @@ export interface TrainingProgram {
   durationWeeks: number
   sessionsPerWeek: number
   estimatedMinutes: number
+  // The profile goal this program is recommended for (see
+  // domain/programs/recommendation.ts) — null if it isn't tied to one.
+  recommendedGoal: PrimaryGoal | null
 }
 
 export interface ProgramDay {

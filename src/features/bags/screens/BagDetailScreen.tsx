@@ -1,5 +1,5 @@
 import { useMemo, useState, type FormEvent } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Button } from '../../../components/ui/Button'
 import { Input } from '../../../components/ui/Input'
 import { Select } from '../../../components/ui/Select'
@@ -188,26 +188,36 @@ function BagDetailContent({ bagId, bag, bagDiscs, analysis, onDeleted }: BagDeta
 
       <div className="mb-6">
         <p className="mb-3 text-xs uppercase tracking-wide text-white/55">Add a disc</p>
-        <form onSubmit={handleAddDisc} className="flex flex-col gap-3">
-          <Select
-            id="addDiscSelect"
-            label="Disc"
-            value={selectedDiscId}
-            onChange={(e) => setSelectedDiscId(e.target.value)}
+        {(activeDiscs?.length ?? 0) === 0 ? (
+          <Link
+            to="/discs/new"
+            className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-white/15 bg-white/5 px-4 py-4 text-sm text-white/60 transition-colors hover:border-white/30 hover:text-white/80"
           >
-            <option value="">
-              {availableDiscs.length === 0 ? 'No available discs' : 'Choose a disc…'}
-            </option>
-            {availableDiscs.map((d) => (
-              <option key={d.disc.id} value={d.disc.id}>
-                {discLabel(d)}
-              </option>
-            ))}
-          </Select>
-          <Button type="submit" disabled={!selectedDiscId || addDiscToBag.isPending}>
-            {addDiscToBag.isPending ? 'Adding…' : 'Add to bag'}
-          </Button>
-        </form>
+            <span>You don&apos;t have any discs yet — add one to put it in this bag.</span>
+            <span className="shrink-0 font-medium text-brand-green">Add a disc →</span>
+          </Link>
+        ) : availableDiscs.length === 0 ? (
+          <p className="text-sm text-white/50">All your active discs are already in this bag.</p>
+        ) : (
+          <form onSubmit={handleAddDisc} className="flex flex-col gap-3">
+            <Select
+              id="addDiscSelect"
+              label="Disc"
+              value={selectedDiscId}
+              onChange={(e) => setSelectedDiscId(e.target.value)}
+            >
+              <option value="">Choose a disc…</option>
+              {availableDiscs.map((d) => (
+                <option key={d.disc.id} value={d.disc.id}>
+                  {discLabel(d)}
+                </option>
+              ))}
+            </Select>
+            <Button type="submit" disabled={!selectedDiscId || addDiscToBag.isPending}>
+              {addDiscToBag.isPending ? 'Adding…' : 'Add to bag'}
+            </Button>
+          </form>
+        )}
         {addDiscToBag.isError && <p className="mt-2 text-sm text-red-400">Unable to add that disc.</p>}
       </div>
 

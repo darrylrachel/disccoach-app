@@ -9,6 +9,7 @@ import type {
   ProgramEnrollment,
   TrainingProgram,
 } from '../domain/programs/models'
+import type { PrimaryGoal } from '../domain/profile/models'
 import { calculateProgramProgress } from '../domain/programs/programProgress'
 import type { PracticeSession } from '../domain/practice/models'
 
@@ -29,6 +30,7 @@ function toDomainProgram(row: ProgramRow): TrainingProgram {
     durationWeeks: row.duration_weeks,
     sessionsPerWeek: row.sessions_per_week,
     estimatedMinutes: row.estimated_minutes,
+    recommendedGoal: row.primary_goal as PrimaryGoal | null,
   }
 }
 
@@ -126,6 +128,9 @@ export async function listEnrollmentHistory(userId: string): Promise<ProgramEnro
   return data.map(toDomainEnrollment)
 }
 
+// The DB trigger `enforce_single_active_enrollment` supersedes (marks
+// abandoned) any other active enrollment for this user, so a duplicate
+// enroll attempt can never leave two rows active — see migration 0013.
 export async function enrollInProgram(userId: string, programId: string): Promise<ProgramEnrollment> {
   const payload: EnrollmentInsert = { user_id: userId, program_id: programId }
 

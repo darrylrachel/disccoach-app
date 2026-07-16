@@ -566,6 +566,7 @@ export type Database = {
           estimated_minutes: number
           id: string
           name: string
+          primary_goal: string | null
           sessions_per_week: number
         }
         Insert: {
@@ -577,6 +578,7 @@ export type Database = {
           estimated_minutes: number
           id?: string
           name: string
+          primary_goal?: string | null
           sessions_per_week: number
         }
         Update: {
@@ -588,6 +590,7 @@ export type Database = {
           estimated_minutes?: number
           id?: string
           name?: string
+          primary_goal?: string | null
           sessions_per_week?: number
         }
         Relationships: []

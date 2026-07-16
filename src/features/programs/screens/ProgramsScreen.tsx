@@ -3,14 +3,20 @@ import { Button } from '../../../components/ui/Button'
 import { Card } from '../../../components/ui/Card'
 import { SectionLabel } from '../../../components/ui/SectionLabel'
 import type { TrainingProgram } from '../../../domain/programs/models'
+import { recommendProgramForGoal } from '../../../domain/programs/recommendation'
 import { usePrograms } from '../hooks/usePrograms'
 import { useActiveEnrollment, useEnrollmentHistory } from '../hooks/useProgramEnrollment'
 import { PROGRAM_CATEGORY_LABELS, PROGRAM_DIFFICULTY_LABELS } from '../programLabels'
+import { useProfile, useUpdateProfile } from '../../profile/hooks/useProfile'
+import { PRIMARY_GOAL_LABELS, PRIMARY_GOAL_ORDER } from '../../profile/profileLabels'
 
-function ProgramCard({ program }: { program: TrainingProgram }) {
+function ProgramCard({ program, recommended }: { program: TrainingProgram; recommended: boolean }) {
   return (
-    <Card className="flex flex-col gap-3">
+    <Card className={`flex flex-col gap-3 ${recommended ? 'border-brand-gold/40 bg-brand-gold/5' : ''}`}>
       <div>
+        {recommended && (
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-brand-gold">Recommended for you</p>
+        )}
         <p className="text-lg font-semibold text-white">{program.name}</p>
         <p className="mt-1 text-sm text-white/60">{program.description}</p>
       </div>
@@ -36,13 +42,43 @@ function ProgramCard({ program }: { program: TrainingProgram }) {
   )
 }
 
+// Shown only when a profile has no primary goal yet (in practice this only
+// happens for pre-onboarding data anomalies, since onboarding requires a
+// goal) — picking one immediately surfaces a recommendation below.
+function GoalPicker() {
+  const updateProfile = useUpdateProfile()
+
+  return (
+    <div className="mb-8 rounded-xl border border-white/10 bg-white/5 p-5">
+      <p className="mb-1 font-semibold text-white">Not sure where to start?</p>
+      <p className="mb-4 text-sm text-white/50">Pick a goal and we&apos;ll recommend a program.</p>
+      <div className="flex flex-wrap gap-2">
+        {PRIMARY_GOAL_ORDER.map((goal) => (
+          <button
+            key={goal}
+            type="button"
+            onClick={() => updateProfile.mutate({ primaryGoal: goal })}
+            disabled={updateProfile.isPending}
+            className="inline-flex min-h-11 items-center justify-center rounded-full border border-white/20 px-3 py-1 text-xs font-medium text-white/70 transition-colors hover:border-brand-green/60 hover:text-white disabled:opacity-50"
+          >
+            {PRIMARY_GOAL_LABELS[goal]}
+          </button>
+        ))}
+      </div>
+      {updateProfile.isError && <p className="mt-3 text-sm text-red-400">Unable to save your goal.</p>}
+    </div>
+  )
+}
+
 export function ProgramsScreen() {
   const navigate = useNavigate()
   const programsQuery = usePrograms()
   const activeEnrollmentQuery = useActiveEnrollment()
   const historyQuery = useEnrollmentHistory()
+  const { data: profile } = useProfile()
 
   const hasActiveProgram = !!activeEnrollmentQuery.data
+  const recommended = recommendProgramForGoal(profile?.primaryGoal ?? null, programsQuery.data ?? [])
 
   return (
     <div className="px-6 py-8 pb-24">
@@ -58,13 +94,19 @@ export function ProgramsScreen() {
         </div>
       )}
 
+      {!hasActiveProgram && profile && !profile.primaryGoal && <GoalPicker />}
+
       {programsQuery.isLoading && <p className="text-white/50">Loading programs…</p>}
       {programsQuery.isError && <p className="text-red-400">Unable to load training programs.</p>}
 
       {programsQuery.data && (
         <div className="mb-8 flex flex-col gap-4">
           {programsQuery.data.map((program) => (
-            <ProgramCard key={program.id} program={program} />
+            <ProgramCard
+              key={program.id}
+              program={program}
+              recommended={!hasActiveProgram && program.id === recommended?.id}
+            />
           ))}
         </div>
       )}

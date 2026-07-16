@@ -15,8 +15,10 @@ import { useStreaks } from '../hooks/useStreaks'
 import { recordLabel, recordValueLabel } from '../recordLabels'
 import { TrendSparkline } from '../../../components/charts/TrendSparkline'
 import { programDayLabel } from '../../../domain/programs/models'
-import { useProgram } from '../../programs/hooks/usePrograms'
+import { recommendProgramForGoal } from '../../../domain/programs/recommendation'
+import { usePrograms, useProgram } from '../../programs/hooks/usePrograms'
 import { useActiveEnrollment, useProgramProgress } from '../../programs/hooks/useProgramEnrollment'
+import { useProfile } from '../../profile/hooks/useProfile'
 
 const QUICK_ACTIONS = [
   { to: '/practice', icon: '🥏', label: 'Start Practice' },
@@ -58,6 +60,9 @@ export function DashboardScreen() {
   const { data: activeEnrollment } = useActiveEnrollment()
   const { data: activeProgram } = useProgram(activeEnrollment?.programId)
   const { progress: activeProgramProgress } = useProgramProgress(activeEnrollment?.programId, activeEnrollment?.id)
+  const { data: profile } = useProfile()
+  const { data: allPrograms } = usePrograms()
+  const recommendedProgram = recommendProgramForGoal(profile?.primaryGoal ?? null, allPrograms ?? [])
   const { data: records } = usePersonalRecords()
   const { data: recentSessions, isLoading: sessionsLoading } = useRecentPracticeSessions(5)
   const { distances, trendFor } = usePuttingTrend()
@@ -132,6 +137,13 @@ export function DashboardScreen() {
           </div>
           <span className="shrink-0 font-medium text-brand-green">Continue training →</span>
         </Link>
+      ) : recommendedProgram ? (
+        <Link to={`/programs/${recommendedProgram.id}`} className={`mb-8 ${EMPTY_STATE_CLASS}`}>
+          <span>
+            Recommended for you: <span className="text-white">{recommendedProgram.name}</span>
+          </span>
+          <span className="shrink-0 font-medium text-brand-green">View program →</span>
+        </Link>
       ) : (
         <Link to="/programs" className={`mb-8 ${EMPTY_STATE_CLASS}`}>
           <span>No active training program — follow a structured plan built around your goals.</span>
@@ -152,10 +164,15 @@ export function DashboardScreen() {
             </span>
           )}
         </Link>
+      ) : bags && bags.length > 0 ? (
+        <Link to="/bags" className={`mb-8 ${EMPTY_STATE_CLASS}`}>
+          <span>No default bag set — choose one to see it here.</span>
+          <span className="shrink-0 font-medium text-brand-green">Choose bag →</span>
+        </Link>
       ) : (
         <Link to="/bags" className={`mb-8 ${EMPTY_STATE_CLASS}`}>
-          <span>No active bag yet — set one as default to see it here.</span>
-          <span className="shrink-0 font-medium text-brand-green">Choose bag →</span>
+          <span>You haven&apos;t built a bag yet — add the discs you actually throw.</span>
+          <span className="shrink-0 font-medium text-brand-green">Build your bag →</span>
         </Link>
       )}
 

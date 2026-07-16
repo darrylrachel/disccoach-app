@@ -4,6 +4,7 @@ const NAV_ITEMS = [
   { to: '/discs', label: 'Discs' },
   { to: '/bags', label: 'Bags' },
   { to: '/practice', label: 'Practice' },
+  { to: '/programs', label: 'Programs' },
   { to: '/', label: 'Progress', end: true },
 ]
 
