@@ -77,3 +77,10 @@ interface NewDiscBase {
 export type NewDiscInput =
   | (NewDiscBase & { catalogId: string })
   | (NewDiscBase & { customManufacturer: string; customMoldName: string })
+
+// Re-identifying an existing disc (e.g. correcting a manual entry to a
+// catalog match, or vice versa) — mirrors NewDiscInput's two first-class
+// paths, but as a standalone update rather than bundled with every field.
+export type DiscIdentityUpdate =
+  | { catalogId: string }
+  | { customManufacturer: string; customMoldName: string }

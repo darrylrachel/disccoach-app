@@ -47,7 +47,7 @@ export type Database = {
           {
             foreignKeyName: "bag_discs_disc_id_fkey"
             columns: ["disc_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "discs"
             referencedColumns: ["id"]
           },
@@ -210,6 +210,120 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      equipment: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      exercise_equipment_requirements: {
+        Row: {
+          equipment_id: string
+          exercise_id: string
+        }
+        Insert: {
+          equipment_id: string
+          exercise_id: string
+        }
+        Update: {
+          equipment_id?: string
+          exercise_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_equipment_requirements_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_equipment_requirements_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exercise_substitutions: {
+        Row: {
+          exercise_id: string
+          rank: number
+          substitute_exercise_id: string
+        }
+        Insert: {
+          exercise_id: string
+          rank: number
+          substitute_exercise_id: string
+        }
+        Update: {
+          exercise_id?: string
+          rank?: number
+          substitute_exercise_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_substitutions_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_substitutions_substitute_exercise_id_fkey"
+            columns: ["substitute_exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exercises: {
+        Row: {
+          created_at: string
+          id: string
+          instructions: string
+          movement_pattern: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          instructions: string
+          movement_pattern: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          instructions?: string
+          movement_pattern?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
       }
       feedback: {
         Row: {
@@ -395,10 +509,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "practice_sessions_template_id_fkey"
-            columns: ["template_id"]
+            foreignKeyName: "practice_sessions_enrollment_id_fkey"
+            columns: ["enrollment_id"]
             isOneToOne: false
-            referencedRelation: "practice_session_templates"
+            referencedRelation: "user_program_enrollments"
             referencedColumns: ["id"]
           },
           {
@@ -409,19 +523,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "practice_sessions_enrollment_id_fkey"
-            columns: ["enrollment_id"]
+            foreignKeyName: "practice_sessions_template_id_fkey"
+            columns: ["template_id"]
             isOneToOne: false
-            referencedRelation: "user_program_enrollments"
+            referencedRelation: "practice_session_templates"
             referencedColumns: ["id"]
           },
         ]
       }
       profiles: {
         Row: {
+          avatar_url: string | null
+          bio: string | null
           created_at: string
           display_name: string | null
+          favorite_manufacturer: string | null
+          favorite_mold: string | null
           forehand_distance: number | null
+          home_course: string | null
           id: string
           max_distance: number | null
           primary_goal: string | null
@@ -430,11 +549,17 @@ export type Database = {
           skill_level: string | null
           throwing_hand: string | null
           updated_at: string
+          years_playing: number | null
         }
         Insert: {
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           display_name?: string | null
+          favorite_manufacturer?: string | null
+          favorite_mold?: string | null
           forehand_distance?: number | null
+          home_course?: string | null
           id: string
           max_distance?: number | null
           primary_goal?: string | null
@@ -443,11 +568,17 @@ export type Database = {
           skill_level?: string | null
           throwing_hand?: string | null
           updated_at?: string
+          years_playing?: number | null
         }
         Update: {
+          avatar_url?: string | null
+          bio?: string | null
           created_at?: string
           display_name?: string | null
+          favorite_manufacturer?: string | null
+          favorite_mold?: string | null
           forehand_distance?: number | null
+          home_course?: string | null
           id?: string
           max_distance?: number | null
           primary_goal?: string | null
@@ -456,6 +587,7 @@ export type Database = {
           skill_level?: string | null
           throwing_hand?: string | null
           updated_at?: string
+          years_playing?: number | null
         }
         Relationships: []
       }
@@ -465,7 +597,8 @@ export type Database = {
           enrollment_id: string
           id: string
           program_day_id: string
-          session_id: string
+          resistance_session_id: string | null
+          session_id: string | null
           user_id: string
         }
         Insert: {
@@ -473,7 +606,8 @@ export type Database = {
           enrollment_id: string
           id?: string
           program_day_id: string
-          session_id: string
+          resistance_session_id?: string | null
+          session_id?: string | null
           user_id: string
         }
         Update: {
@@ -481,7 +615,8 @@ export type Database = {
           enrollment_id?: string
           id?: string
           program_day_id?: string
-          session_id?: string
+          resistance_session_id?: string | null
+          session_id?: string | null
           user_id?: string
         }
         Relationships: [
@@ -500,6 +635,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "program_day_completions_resistance_session_id_fkey"
+            columns: ["resistance_session_id"]
+            isOneToOne: false
+            referencedRelation: "resistance_sessions"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "program_day_completions_session_id_fkey"
             columns: ["session_id"]
             isOneToOne: false
@@ -508,34 +650,85 @@ export type Database = {
           },
         ]
       }
+      program_day_exercises: {
+        Row: {
+          exercise_id: string
+          id: string
+          notes: string | null
+          order_index: number
+          program_day_id: string
+          reps: string
+          rest_seconds: number | null
+          sets: number
+        }
+        Insert: {
+          exercise_id: string
+          id?: string
+          notes?: string | null
+          order_index: number
+          program_day_id: string
+          reps: string
+          rest_seconds?: number | null
+          sets: number
+        }
+        Update: {
+          exercise_id?: string
+          id?: string
+          notes?: string | null
+          order_index?: number
+          program_day_id?: string
+          reps?: string
+          rest_seconds?: number | null
+          sets?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "program_day_exercises_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "program_day_exercises_program_day_id_fkey"
+            columns: ["program_day_id"]
+            isOneToOne: false
+            referencedRelation: "program_days"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       program_days: {
         Row: {
           created_at: string
           day_number: number
+          day_type: string
           description: string
           id: string
           program_id: string
-          template_id: string
+          template_id: string | null
           title: string
           week_number: number
         }
         Insert: {
           created_at?: string
           day_number: number
+          day_type?: string
           description: string
           id?: string
           program_id: string
-          template_id: string
+          template_id?: string | null
           title: string
           week_number: number
         }
         Update: {
           created_at?: string
           day_number?: number
+          day_type?: string
           description?: string
           id?: string
           program_id?: string
-          template_id?: string
+          template_id?: string | null
           title?: string
           week_number?: number
         }
@@ -556,6 +749,51 @@ export type Database = {
           },
         ]
       }
+      resistance_sessions: {
+        Row: {
+          completed_at: string | null
+          enrollment_id: string | null
+          id: string
+          program_day_id: string | null
+          started_at: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          enrollment_id?: string | null
+          id?: string
+          program_day_id?: string | null
+          started_at?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          enrollment_id?: string | null
+          id?: string
+          program_day_id?: string | null
+          started_at?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resistance_sessions_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "user_program_enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resistance_sessions_program_day_id_fkey"
+            columns: ["program_day_id"]
+            isOneToOne: false
+            referencedRelation: "program_days"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       training_programs: {
         Row: {
           category: string
@@ -565,8 +803,11 @@ export type Database = {
           duration_weeks: number
           estimated_minutes: number
           id: string
+          modality: string
           name: string
           primary_goal: string | null
+          resistance_program_type: string | null
+          season_focus: string | null
           sessions_per_week: number
         }
         Insert: {
@@ -577,8 +818,11 @@ export type Database = {
           duration_weeks: number
           estimated_minutes: number
           id?: string
+          modality?: string
           name: string
           primary_goal?: string | null
+          resistance_program_type?: string | null
+          season_focus?: string | null
           sessions_per_week: number
         }
         Update: {
@@ -589,11 +833,43 @@ export type Database = {
           duration_weeks?: number
           estimated_minutes?: number
           id?: string
+          modality?: string
           name?: string
           primary_goal?: string | null
+          resistance_program_type?: string | null
+          season_focus?: string | null
           sessions_per_week?: number
         }
         Relationships: []
+      }
+      user_equipment: {
+        Row: {
+          created_at: string
+          equipment_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          equipment_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          equipment_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_equipment_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_program_enrollments: {
         Row: {

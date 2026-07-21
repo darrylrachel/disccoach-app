@@ -42,6 +42,19 @@ const ProgramDetailScreen = lazy(() =>
 const ActiveProgramScreen = lazy(() =>
   import('../features/programs/screens/ActiveProgramScreen').then((m) => ({ default: m.ActiveProgramScreen })),
 )
+const EquipmentSelectionScreen = lazy(() =>
+  import('../features/resistanceTraining/screens/EquipmentSelectionScreen').then((m) => ({
+    default: m.EquipmentSelectionScreen,
+  })),
+)
+const ResistanceWorkoutScreen = lazy(() =>
+  import('../features/resistanceTraining/screens/ResistanceWorkoutScreen').then((m) => ({
+    default: m.ResistanceWorkoutScreen,
+  })),
+)
+const AccountScreen = lazy(() =>
+  import('../features/account/screens/AccountScreen').then((m) => ({ default: m.AccountScreen })),
+)
 const AboutScreen = lazy(() => import('../features/support/screens/AboutScreen').then((m) => ({ default: m.AboutScreen })))
 const SupportScreen = lazy(() =>
   import('../features/support/screens/SupportScreen').then((m) => ({ default: m.SupportScreen })),
@@ -79,6 +92,9 @@ export function AppRouter() {
                 <Route path="/programs" element={<ProgramsScreen />} />
                 <Route path="/programs/active" element={<ActiveProgramScreen />} />
                 <Route path="/programs/:programId" element={<ProgramDetailScreen />} />
+                <Route path="/programs/:programId/equipment" element={<EquipmentSelectionScreen />} />
+                <Route path="/resistance/:sessionId" element={<ResistanceWorkoutScreen />} />
+                <Route path="/account" element={<AccountScreen />} />
                 <Route path="/about" element={<AboutScreen />} />
                 <Route path="/support" element={<SupportScreen />} />
                 <Route path="/privacy" element={<PrivacyScreen />} />

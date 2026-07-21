@@ -4,6 +4,16 @@ import type { PrimaryGoal } from '../profile/models'
 export type ProgramCategory = PracticeCategory | 'mixed'
 export type ProgramDifficulty = TemplateDifficulty
 export type EnrollmentStatus = 'active' | 'completed' | 'abandoned'
+export type ProgramModality = 'practice' | 'resistance'
+export type ResistanceProgramType =
+  | 'distance_development'
+  | 'athletic_performance'
+  | 'strength'
+  | 'muscle_building'
+  | 'mobility'
+  | 'injury_prevention'
+export type SeasonFocus = 'in_season' | 'off_season'
+export type ProgramDayType = 'practice' | 'resistance'
 
 export interface TrainingProgram {
   id: string
@@ -17,6 +27,11 @@ export interface TrainingProgram {
   // The profile goal this program is recommended for (see
   // domain/programs/recommendation.ts) — null if it isn't tied to one.
   recommendedGoal: PrimaryGoal | null
+  // A resistance program requires an equipment-selection step before
+  // enrollment (see features/resistanceTraining); practice programs don't.
+  modality: ProgramModality
+  resistanceProgramType: ResistanceProgramType | null
+  seasonFocus: SeasonFocus | null
 }
 
 export interface ProgramDay {
@@ -26,7 +41,10 @@ export interface ProgramDay {
   dayNumber: number
   title: string
   description: string
-  templateId: string
+  dayType: ProgramDayType
+  // Only set for 'practice' days — a 'resistance' day's exercises live in
+  // program_day_exercises instead (see domain/resistanceTraining).
+  templateId: string | null
 }
 
 export interface ProgramEnrollment {
@@ -43,7 +61,10 @@ export interface ProgramDayCompletion {
   userId: string
   enrollmentId: string
   programDayId: string
-  sessionId: string
+  // Exactly one of these is set, depending on whether the day was completed
+  // via a practice session or a resistance session (see migration 0020).
+  sessionId: string | null
+  resistanceSessionId: string | null
   completedAt: string
 }
 

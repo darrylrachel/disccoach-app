@@ -44,6 +44,13 @@ export function ProgramDetailScreen() {
 
   function handleStart() {
     if (!programId) return
+    // Resistance programs need an equipment inventory before the first
+    // workout can be resolved, so enrollment happens at the end of that
+    // flow instead of here directly (see EquipmentSelectionScreen).
+    if (program?.modality === 'resistance') {
+      navigate(`/programs/${programId}/equipment`)
+      return
+    }
     enrollInProgram.mutate(programId, { onSuccess: () => navigate('/programs/active') })
   }
 

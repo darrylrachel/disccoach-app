@@ -9,6 +9,7 @@ import { useAbandonEnrollment } from '../hooks/useProgramMutations'
 import { useActivePracticeSession } from '../../practice/hooks/usePracticeSession'
 import { usePracticeTemplate } from '../../practice/hooks/usePracticeTemplates'
 import { useStartPracticeSession } from '../../practice/hooks/usePracticeMutations'
+import { useActiveResistanceSession, useStartResistanceSession } from '../../resistanceTraining/hooks/useResistanceSession'
 import { CATEGORY_LABELS } from '../../practice/categoryLabels'
 
 export function ActiveProgramScreen() {
@@ -19,8 +20,11 @@ export function ActiveProgramScreen() {
   const { data: program, isLoading: programLoading } = useProgram(enrollment?.programId)
   const { progress, isLoading: progressLoading } = useProgramProgress(enrollment?.programId, enrollment?.id)
   const activeSessionQuery = useActivePracticeSession()
-  const { data: currentTemplate } = usePracticeTemplate(progress?.currentDay?.templateId)
+  const activeResistanceSessionQuery = useActiveResistanceSession()
+  const isResistanceDay = progress?.currentDay?.dayType === 'resistance'
+  const { data: currentTemplate } = usePracticeTemplate(isResistanceDay ? null : progress?.currentDay?.templateId)
   const startSession = useStartPracticeSession()
+  const startResistanceSession = useStartResistanceSession()
   const abandonEnrollment = useAbandonEnrollment()
 
   if (enrollmentQuery.isLoading || programLoading || progressLoading) {
@@ -40,6 +44,12 @@ export function ActiveProgramScreen() {
   const linkedSessionInProgress = activeSession?.enrollmentId === enrollment.id ? activeSession : null
   const otherSessionInProgress = activeSession && activeSession.enrollmentId !== enrollment.id ? activeSession : null
 
+  const activeResistanceSession = activeResistanceSessionQuery.data
+  const linkedResistanceSessionInProgress =
+    activeResistanceSession?.enrollmentId === enrollment.id ? activeResistanceSession : null
+  const otherResistanceSessionInProgress =
+    activeResistanceSession && activeResistanceSession.enrollmentId !== enrollment.id ? activeResistanceSession : null
+
   function handleAbandon() {
     if (!confirm(`Abandon "${program!.name}"? Your progress so far will be saved.`)) return
     abandonEnrollment.mutate(enrollment!.id, { onSuccess: () => navigate('/programs') })
@@ -47,7 +57,17 @@ export function ActiveProgramScreen() {
 
   function handleStartToday() {
     const day = progress?.currentDay
-    if (!day || !currentTemplate) return
+    if (!day) return
+
+    if (isResistanceDay) {
+      startResistanceSession.mutate(
+        { programDayId: day.id, enrollmentId: enrollment!.id },
+        { onSuccess: (session) => navigate(`/resistance/${session.id}`) },
+      )
+      return
+    }
+
+    if (!currentTemplate) return
     startSession.mutate(
       {
         templateId: day.templateId,
@@ -118,13 +138,34 @@ export function ActiveProgramScreen() {
             <div className="mb-6 rounded-xl border border-white/10 bg-white/5 p-5">
               <p className="mb-1 text-lg font-semibold text-white">{progress.currentDay.title}</p>
               <p className="mb-4 text-sm text-white/50">{progress.currentDay.description}</p>
-              {currentTemplate && (
-                <p className="mb-4 text-xs uppercase tracking-wide text-white/40">
-                  {CATEGORY_LABELS[currentTemplate.category]} · {currentTemplate.durationMinutes} min
-                </p>
+              {isResistanceDay ? (
+                <p className="mb-4 text-xs uppercase tracking-wide text-white/40">Resistance training</p>
+              ) : (
+                currentTemplate && (
+                  <p className="mb-4 text-xs uppercase tracking-wide text-white/40">
+                    {CATEGORY_LABELS[currentTemplate.category]} · {currentTemplate.durationMinutes} min
+                  </p>
+                )
               )}
 
-              {linkedSessionInProgress ? (
+              {isResistanceDay ? (
+                linkedResistanceSessionInProgress ? (
+                  <Button onClick={() => navigate(`/resistance/${linkedResistanceSessionInProgress.id}`)}>
+                    Resume workout
+                  </Button>
+                ) : otherResistanceSessionInProgress ? (
+                  <>
+                    <Button disabled>Start today&apos;s workout</Button>
+                    <p className="mt-3 text-sm text-white/50">
+                      You have another workout in progress. Finish or abandon it first.
+                    </p>
+                  </>
+                ) : (
+                  <Button onClick={handleStartToday} disabled={startResistanceSession.isPending}>
+                    {startResistanceSession.isPending ? 'Starting…' : "Start today's workout"}
+                  </Button>
+                )
+              ) : linkedSessionInProgress ? (
                 <Button onClick={() => navigate(`/practice/${linkedSessionInProgress.id}`)}>Resume session</Button>
               ) : otherSessionInProgress ? (
                 <>
@@ -138,7 +179,7 @@ export function ActiveProgramScreen() {
                   {startSession.isPending ? 'Starting…' : "Start today's session"}
                 </Button>
               )}
-              {startSession.isError && (
+              {(startSession.isError || startResistanceSession.isError) && (
                 <p className="mt-3 text-sm text-red-400">Unable to start that session. Try again.</p>
               )}
             </div>

@@ -12,6 +12,12 @@ function makeProfile(overrides: Partial<PlayerProfile> = {}): PlayerProfile {
     maxDistance: null,
     forehandDistance: null,
     puttingStyle: null,
+    avatarUrl: null,
+    homeCourse: null,
+    yearsPlaying: null,
+    favoriteManufacturer: null,
+    favoriteMold: null,
+    bio: null,
     ...overrides,
   }
 }

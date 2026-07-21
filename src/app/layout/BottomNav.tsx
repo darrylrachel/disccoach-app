@@ -10,7 +10,7 @@ const NAV_ITEMS = [
 
 export function BottomNav() {
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-white/10 bg-brand-bg/95 backdrop-blur">
+    <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-white/10 bg-brand-bg/95 pb-[env(safe-area-inset-bottom)] backdrop-blur">
       <ul className="mx-auto flex max-w-md justify-around">
         {NAV_ITEMS.map((item) => (
           <li key={item.to} className="flex-1">

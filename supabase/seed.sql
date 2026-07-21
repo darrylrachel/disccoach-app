@@ -411,3 +411,152 @@ from (values
 ) as v(program_name, week_number, day_number, title, description, template_name)
 join public.training_programs p on p.name = v.program_name
 join public.practice_session_templates t on t.name = v.template_name;
+
+-- Equipment reference data. Slugs match domain/resistanceTraining/equipmentPresets.ts
+-- (EQUIPMENT_PRESETS), which bulk-select subsets of these rows by slug.
+insert into public.equipment (slug, name, category)
+values
+  ('bodyweight', 'Bodyweight', 'bodyweight'),
+  ('resistance_bands', 'Resistance Bands', 'accessory'),
+  ('adjustable_dumbbells', 'Adjustable Dumbbells', 'free_weight'),
+  ('barbell', 'Barbell', 'free_weight'),
+  ('plates', 'Weight Plates', 'free_weight'),
+  ('squat_rack', 'Squat Rack', 'machine'),
+  ('adjustable_bench', 'Adjustable Bench', 'accessory'),
+  ('pull_up_bar', 'Pull-Up Bar', 'accessory'),
+  ('landmine', 'Landmine Attachment', 'accessory'),
+  ('kettlebells', 'Kettlebells', 'free_weight'),
+  ('medicine_ball', 'Medicine Ball', 'accessory'),
+  ('cable_machine', 'Cable Machine', 'machine'),
+  ('selectorized_machines', 'Selectorized Machines', 'machine'),
+  ('smith_machine', 'Smith Machine', 'machine');
+
+-- A small starter exercise library demonstrating the equipment-aware
+-- substitution engine (domain/resistanceTraining/equipmentResolution.ts)
+-- across a few movement patterns. Each chain terminates in a
+-- bodyweight-only variant per the authoring convention in migration 0017.
+insert into public.exercises (slug, name, movement_pattern, instructions)
+values
+  ('barbell-back-squat', 'Barbell Back Squat', 'squat', 'Bar on the back rack, squat to depth, drive up through the heels.'),
+  ('goblet-squat-dumbbell', 'Goblet Squat (Dumbbell)', 'squat', 'Hold a dumbbell at chest height, squat to depth.'),
+  ('goblet-squat-kettlebell', 'Goblet Squat (Kettlebell)', 'squat', 'Hold a kettlebell at chest height, squat to depth.'),
+  ('bodyweight-squat', 'Bodyweight Squat', 'squat', 'Feet shoulder-width, squat to depth with arms extended for balance.'),
+
+  ('barbell-deadlift', 'Barbell Deadlift', 'hinge', 'Hinge at the hips, grip the bar, drive through the floor to stand tall.'),
+  ('dumbbell-romanian-deadlift', 'Dumbbell Romanian Deadlift', 'hinge', 'Hinge at the hips with dumbbells, lower to mid-shin, drive hips forward to stand.'),
+  ('kettlebell-deadlift', 'Kettlebell Deadlift', 'hinge', 'Hinge at the hips with a kettlebell between the feet, stand tall.'),
+  ('bodyweight-good-morning', 'Bodyweight Good Morning', 'hinge', 'Hands behind head, hinge at the hips keeping a flat back, return to standing.'),
+
+  ('barbell-bench-press', 'Barbell Bench Press', 'horizontal_push', 'Lower the bar to the chest, press to full extension.'),
+  ('dumbbell-bench-press', 'Dumbbell Bench Press', 'horizontal_push', 'Lower dumbbells to chest level, press to full extension.'),
+  ('cable-chest-press', 'Cable Chest Press', 'horizontal_push', 'Press cable handles forward from chest height to full extension.'),
+  ('push-up', 'Push-Up', 'horizontal_push', 'Hands under shoulders, lower chest to the floor, press back up.'),
+
+  ('pull-up', 'Pull-Up', 'vertical_pull', 'Grip the bar, pull chin over the bar, lower with control.'),
+  ('lat-pulldown-cable', 'Lat Pulldown (Cable)', 'vertical_pull', 'Pull the cable bar down to chest height, control the return.'),
+  ('dumbbell-bent-over-row', 'Dumbbell Bent-Over Row', 'vertical_pull', 'Hinge forward, row dumbbells to the ribs, control the descent.'),
+  ('bodyweight-superman', 'Bodyweight Superman', 'vertical_pull', 'Lie face down, lift arms and legs off the floor, hold briefly.'),
+
+  ('plank', 'Plank', 'core', 'Hold a straight-body position on forearms and toes, brace the core.');
+
+-- AND-semantics equipment requirements per exercise (see migration 0017).
+insert into public.exercise_equipment_requirements (exercise_id, equipment_id)
+select e.id, eq.id from (values
+  ('barbell-back-squat', 'barbell'), ('barbell-back-squat', 'squat_rack'), ('barbell-back-squat', 'plates'),
+  ('goblet-squat-dumbbell', 'adjustable_dumbbells'),
+  ('goblet-squat-kettlebell', 'kettlebells'),
+  ('bodyweight-squat', 'bodyweight'),
+
+  ('barbell-deadlift', 'barbell'), ('barbell-deadlift', 'plates'),
+  ('dumbbell-romanian-deadlift', 'adjustable_dumbbells'),
+  ('kettlebell-deadlift', 'kettlebells'),
+  ('bodyweight-good-morning', 'bodyweight'),
+
+  ('barbell-bench-press', 'barbell'), ('barbell-bench-press', 'adjustable_bench'), ('barbell-bench-press', 'plates'),
+  ('dumbbell-bench-press', 'adjustable_dumbbells'), ('dumbbell-bench-press', 'adjustable_bench'),
+  ('cable-chest-press', 'cable_machine'),
+  ('push-up', 'bodyweight'),
+
+  ('pull-up', 'pull_up_bar'),
+  ('lat-pulldown-cable', 'cable_machine'),
+  ('dumbbell-bent-over-row', 'adjustable_dumbbells'),
+  ('bodyweight-superman', 'bodyweight'),
+
+  ('plank', 'bodyweight')
+) as v(exercise_slug, equipment_slug)
+join public.exercises e on e.slug = v.exercise_slug
+join public.equipment eq on eq.slug = v.equipment_slug;
+
+-- Ordered substitution chains (rank 1 = first fallback), each terminating
+-- bodyweight-only.
+insert into public.exercise_substitutions (exercise_id, substitute_exercise_id, rank)
+select e.id, sub.id, v.rank from (values
+  ('barbell-back-squat', 'goblet-squat-dumbbell', 1),
+  ('barbell-back-squat', 'goblet-squat-kettlebell', 2),
+  ('barbell-back-squat', 'bodyweight-squat', 3),
+
+  ('barbell-deadlift', 'dumbbell-romanian-deadlift', 1),
+  ('barbell-deadlift', 'kettlebell-deadlift', 2),
+  ('barbell-deadlift', 'bodyweight-good-morning', 3),
+
+  ('barbell-bench-press', 'dumbbell-bench-press', 1),
+  ('barbell-bench-press', 'cable-chest-press', 2),
+  ('barbell-bench-press', 'push-up', 3),
+
+  ('pull-up', 'lat-pulldown-cable', 1),
+  ('pull-up', 'dumbbell-bent-over-row', 2),
+  ('pull-up', 'bodyweight-superman', 3)
+) as v(exercise_slug, substitute_slug, rank)
+join public.exercises e on e.slug = v.exercise_slug
+join public.exercises sub on sub.slug = v.substitute_slug;
+
+-- One example resistance-training program to prove the engine end-to-end.
+-- Additional program types (Distance Development, Mobility, etc.) are
+-- meant to be added the same way — as data, not code.
+insert into public.training_programs
+  (name, description, category, difficulty, duration_weeks, sessions_per_week, estimated_minutes, modality, resistance_program_type, season_focus)
+values
+  (
+    'Off-Season Strength Foundations',
+    'A three-week introduction to full-body strength training, built to work with whatever equipment you have on hand.',
+    'mixed', 'beginner', 3, 2, 40, 'resistance', 'strength', 'off_season'
+  );
+
+insert into public.program_days (program_id, week_number, day_number, title, description, day_type, template_id)
+select p.id, v.week_number, v.day_number, v.title, v.description, 'resistance', null
+from (values
+  (1, 1, 'Full Body A', 'Squat, push, and core work to open the program.'),
+  (1, 2, 'Full Body B', 'Hinge and pull work to balance out Day A.'),
+  (2, 1, 'Full Body A', 'Repeat Day A with an eye on adding a rep or two.'),
+  (2, 2, 'Full Body B', 'Repeat Day B, building on last week.'),
+  (3, 1, 'Full Body A', 'Final squat/push/core session of the program.'),
+  (3, 2, 'Full Body B', 'Final hinge/pull session — check your progress.')
+) as v(week_number, day_number, title, description)
+cross join public.training_programs p
+where p.name = 'Off-Season Strength Foundations';
+
+insert into public.program_day_exercises (program_day_id, exercise_id, order_index, sets, reps, rest_seconds)
+select d.id, e.id, v.order_index, v.sets, v.reps, v.rest_seconds
+from (values
+  (1, 1, 'barbell-back-squat', 1, 3, '8-10', 90),
+  (1, 1, 'barbell-bench-press', 2, 3, '8-10', 90),
+  (1, 1, 'plank', 3, 3, '30-45s', 45),
+  (1, 2, 'barbell-deadlift', 1, 3, '6-8', 120),
+  (1, 2, 'pull-up', 2, 3, '6-10', 90),
+  (1, 2, 'plank', 3, 3, '30-45s', 45),
+  (2, 1, 'barbell-back-squat', 1, 3, '8-10', 90),
+  (2, 1, 'barbell-bench-press', 2, 3, '8-10', 90),
+  (2, 1, 'plank', 3, 3, '30-45s', 45),
+  (2, 2, 'barbell-deadlift', 1, 3, '6-8', 120),
+  (2, 2, 'pull-up', 2, 3, '6-10', 90),
+  (2, 2, 'plank', 3, 3, '30-45s', 45),
+  (3, 1, 'barbell-back-squat', 1, 4, '6-8', 120),
+  (3, 1, 'barbell-bench-press', 2, 4, '6-8', 120),
+  (3, 1, 'plank', 3, 3, '45-60s', 45),
+  (3, 2, 'barbell-deadlift', 1, 4, '5-6', 150),
+  (3, 2, 'pull-up', 2, 4, '6-10', 90),
+  (3, 2, 'plank', 3, 3, '45-60s', 45)
+) as v(week_number, day_number, exercise_slug, order_index, sets, reps, rest_seconds)
+join public.training_programs p on p.name = 'Off-Season Strength Foundations'
+join public.program_days d on d.program_id = p.id and d.week_number = v.week_number and d.day_number = v.day_number
+join public.exercises e on e.slug = v.exercise_slug;

@@ -4,6 +4,7 @@ import { toDomainCatalogEntry } from './discCatalog.service'
 import type {
   Disc,
   DiscCondition,
+  DiscIdentityUpdate,
   DiscStatus,
   DiscWithCatalog,
   NewDiscInput,
@@ -112,6 +113,7 @@ export async function addDisc(userId: string, input: NewDiscInput): Promise<Disc
 }
 
 export interface DiscUpdateInput {
+  identity?: DiscIdentityUpdate
   nickname?: string | null
   plastic?: string | null
   weight?: number | null
@@ -142,6 +144,21 @@ export async function updateDisc(id: string, updates: DiscUpdateInput): Promise<
     confidence_rating: updates.confidenceRating,
     notes: updates.notes,
     favorite_uses: updates.favoriteUses,
+  }
+
+  if (updates.identity) {
+    // Only one of catalog_id / custom_manufacturer+custom_mold_name may be
+    // set at a time (see the discs_catalog_or_custom check constraint), so
+    // re-identifying a disc must null out whichever pair it's leaving.
+    if ('catalogId' in updates.identity) {
+      payload.catalog_id = updates.identity.catalogId
+      payload.custom_manufacturer = null
+      payload.custom_mold_name = null
+    } else {
+      payload.catalog_id = null
+      payload.custom_manufacturer = updates.identity.customManufacturer
+      payload.custom_mold_name = updates.identity.customMoldName
+    }
   }
 
   const { data, error } = await supabase

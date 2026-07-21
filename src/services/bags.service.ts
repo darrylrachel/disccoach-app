@@ -156,3 +156,36 @@ export async function removeDiscFromBag(bagDiscId: string): Promise<void> {
   const { error } = await supabase.from('bag_discs').delete().eq('id', bagDiscId)
   if (error) throw error
 }
+
+// Every disc id currently linked into any of the user's bags — used to
+// derive owned/in-bag/in-storage counts per mold (see domain/disc/collection.ts)
+// without storing a quantity anywhere.
+export async function listBagDiscIdsForUser(userId: string): Promise<Set<string>> {
+  const { data, error } = await supabase
+    .from('bag_discs')
+    .select('disc_id, bags!inner(user_id)')
+    .eq('bags.user_id', userId)
+
+  if (error) throw error
+  return new Set((data as { disc_id: string }[]).map((row) => row.disc_id))
+}
+
+// A disc can only be in one bag at a time (bag_discs.disc_id is unique), so
+// this is safe to assume at most one row.
+export async function getBagAssignmentForDisc(discId: string): Promise<BagDiscWithDisc | null> {
+  const { data, error } = await supabase
+    .from('bag_discs')
+    .select(BAG_DISC_WITH_DISC_SELECT)
+    .eq('disc_id', discId)
+    .maybeSingle()
+
+  if (error) throw error
+  return data ? toDomainBagDiscWithDisc(data as BagDiscRowWithDisc) : null
+}
+
+export async function moveDiscToBag(discId: string, newBagId: string, slot: BagSlot): Promise<BagDisc> {
+  const { error: deleteError } = await supabase.from('bag_discs').delete().eq('disc_id', discId)
+  if (deleteError) throw deleteError
+
+  return addDiscToBag(newBagId, discId, slot)
+}

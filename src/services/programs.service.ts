@@ -5,8 +5,12 @@ import type {
   ProgramCategory,
   ProgramDay,
   ProgramDayCompletion,
+  ProgramDayType,
   ProgramDifficulty,
   ProgramEnrollment,
+  ProgramModality,
+  ResistanceProgramType,
+  SeasonFocus,
   TrainingProgram,
 } from '../domain/programs/models'
 import type { PrimaryGoal } from '../domain/profile/models'
@@ -31,6 +35,9 @@ function toDomainProgram(row: ProgramRow): TrainingProgram {
     sessionsPerWeek: row.sessions_per_week,
     estimatedMinutes: row.estimated_minutes,
     recommendedGoal: row.primary_goal as PrimaryGoal | null,
+    modality: row.modality as ProgramModality,
+    resistanceProgramType: row.resistance_program_type as ResistanceProgramType | null,
+    seasonFocus: row.season_focus as SeasonFocus | null,
   }
 }
 
@@ -42,6 +49,7 @@ function toDomainProgramDay(row: ProgramDayRow): ProgramDay {
     dayNumber: row.day_number,
     title: row.title,
     description: row.description,
+    dayType: row.day_type as ProgramDayType,
     templateId: row.template_id,
   }
 }
@@ -64,6 +72,7 @@ function toDomainCompletion(row: CompletionRow): ProgramDayCompletion {
     enrollmentId: row.enrollment_id,
     programDayId: row.program_day_id,
     sessionId: row.session_id,
+    resistanceSessionId: row.resistance_session_id,
     completedAt: row.completed_at,
   }
 }

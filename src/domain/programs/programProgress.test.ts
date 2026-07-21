@@ -9,6 +9,7 @@ function makeDay(overrides: Partial<ProgramDay> & { id: string }): ProgramDay {
     dayNumber: 1,
     title: overrides.id,
     description: '',
+    dayType: 'practice',
     templateId: 'template-1',
     ...overrides,
   }

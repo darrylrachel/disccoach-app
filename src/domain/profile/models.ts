@@ -20,6 +20,12 @@ export interface PlayerProfile {
   maxDistance: number | null
   forehandDistance: number | null
   puttingStyle: string | null
+  avatarUrl: string | null
+  homeCourse: string | null
+  yearsPlaying: number | null
+  favoriteManufacturer: string | null
+  favoriteMold: string | null
+  bio: string | null
 }
 
 const REQUIRED_ONBOARDING_FIELDS: (keyof PlayerProfile)[] = [

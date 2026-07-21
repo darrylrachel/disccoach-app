@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useSignOut } from '../../auth/hooks/useAuthMutations'
 import { useBags } from '../../bags/hooks/useBags'
 import { useBagAnalysis } from '../../bags/hooks/useBagAnalysis'
 import { CATEGORY_LABELS } from '../../practice/categoryLabels'
@@ -50,8 +49,6 @@ function trendColorClass(summary: TrendSummary): string {
 }
 
 export function DashboardScreen() {
-  const signOut = useSignOut()
-
   const { data: bags } = useBags()
   const activeBag = bags?.find((bag) => bag.isActive) ?? null
   const { analysis: activeBagAnalysis } = useBagAnalysis(activeBag?.id)
@@ -84,13 +81,13 @@ export function DashboardScreen() {
     <div className="px-6 py-8 pb-24">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-white">DiscCoach</h1>
-        <button
-          type="button"
-          onClick={() => signOut.mutate()}
-          className="text-sm text-white/50 hover:text-white"
+        <Link
+          to="/account"
+          aria-label="Account"
+          className="flex min-h-11 min-w-11 items-center justify-center text-white/50 hover:text-white"
         >
-          Sign out
-        </button>
+          ⚙️
+        </Link>
       </div>
 
       <div className="mb-8 grid grid-cols-3 gap-3">

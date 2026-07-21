@@ -24,6 +24,12 @@ function toDomain(row: ProfileRow): PlayerProfile {
     maxDistance: row.max_distance,
     forehandDistance: row.forehand_distance,
     puttingStyle: row.putting_style,
+    avatarUrl: row.avatar_url,
+    homeCourse: row.home_course,
+    yearsPlaying: row.years_playing,
+    favoriteManufacturer: row.favorite_manufacturer,
+    favoriteMold: row.favorite_mold,
+    bio: row.bio,
   }
 }
 
@@ -53,6 +59,12 @@ export async function updateProfile(
       max_distance: updates.maxDistance,
       forehand_distance: updates.forehandDistance,
       putting_style: updates.puttingStyle,
+      avatar_url: updates.avatarUrl,
+      home_course: updates.homeCourse,
+      years_playing: updates.yearsPlaying,
+      favorite_manufacturer: updates.favoriteManufacturer,
+      favorite_mold: updates.favoriteMold,
+      bio: updates.bio,
     })
     .eq('id', userId)
     .select('*')

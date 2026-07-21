@@ -12,6 +12,9 @@ function makeProgram(overrides: Partial<TrainingProgram> & { id: string }): Trai
     sessionsPerWeek: 2,
     estimatedMinutes: 20,
     recommendedGoal: null,
+    modality: 'practice',
+    resistanceProgramType: null,
+    seasonFocus: null,
     ...overrides,
   }
 }
